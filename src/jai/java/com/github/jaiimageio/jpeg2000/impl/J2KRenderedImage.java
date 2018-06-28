@@ -42,7 +42,7 @@
  * $Date: 2006/09/28 00:57:57 $
  * $State: Exp $
  */
-package com.github.jpeg2000;
+package com.github.jaiimageio.jpeg2000.impl;
 
 import java.awt.Point;
 import java.awt.Rectangle;

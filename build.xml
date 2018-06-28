@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="jai-imageio-jpeg2000" default="jar">
+    <property name="build.sysclasspath" value="ignore"/>
+
     <target name="clean">
         <delete dir="target"/>
     </target>
@@ -7,6 +9,9 @@
     <target name="compile">
         <mkdir dir="target/classes"/>
         <javac source="1.5" target="1.5" destdir="target/classes" srcdir="src/main/java" debug="true"/>
+        <copy todir="target/classes">
+          <fileset dir="src/main/resources" />
+        </copy>
     </target>
 
     <target name="jar" depends="compile">
