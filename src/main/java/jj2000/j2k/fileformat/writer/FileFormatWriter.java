@@ -57,9 +57,9 @@ import jj2000.j2k.io.BEBufferedRandomAccessFile;
 
 import org.w3c.dom.NodeList;
 
-import com.github.jaiimageio.jpeg2000.impl.Box;
-import com.github.jaiimageio.jpeg2000.impl.J2KMetadata;
-import com.github.jaiimageio.jpeg2000.impl.J2KMetadataFormat;
+import com.github.jpeg2000.Box;
+import com.github.jpeg2000.J2KMetadata;
+import com.github.jpeg2000.J2KMetadataFormat;
 
 /**
  * This class writes the file format wrapper that may or may not exist around

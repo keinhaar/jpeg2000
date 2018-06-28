@@ -42,11 +42,10 @@
  * $Date: 2005/02/11 05:01:33 $
  * $State: Exp $
  */
-package com.github.jaiimageio.jpeg2000.impl;
+package com.github.jpeg2000;
 
 import javax.imageio.ImageReadParam;
 
-import com.github.jaiimageio.jpeg2000.J2KImageReadParam;
 /**
  * A subclass of <code>ImageReadParam</code> for reading images in
  * the JPEG 2000 format.

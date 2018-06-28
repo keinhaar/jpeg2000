@@ -42,7 +42,7 @@
  * $Date: 2007/09/05 20:03:20 $
  * $State: Exp $
  */
-package com.github.jaiimageio.jpeg2000.impl;
+package com.github.jpeg2000;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -62,8 +62,6 @@ import javax.imageio.stream.ImageOutputStream;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import com.github.jaiimageio.impl.common.ImageUtil;
 
 /**
  * This class is defined to create the box of JP2 file format.  A box has
@@ -639,4 +637,5 @@ public class Box {
      */
     protected void compose() {
     }
+
 }

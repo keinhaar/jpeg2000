@@ -42,7 +42,7 @@
  * $Date: 2006/09/22 23:07:25 $
  * $State: Exp $
  */
-package com.github.jaiimageio.jpeg2000.impl;
+package com.github.jpeg2000;
 
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -59,9 +59,7 @@ import jj2000.j2k.image.DataBlk;
 import jj2000.j2k.image.DataBlkInt;
 import jj2000.j2k.image.ImgData;
 
-import com.github.jaiimageio.impl.common.ImageUtil;
-
-public class RenderedImageSrc implements BlkImgDataSrc {
+class DummyRenderedImageSrc implements BlkImgDataSrc {
     /** The width of the image */
     private int w;
 
@@ -131,7 +129,6 @@ public class RenderedImageSrc implements BlkImgDataSrc {
     private boolean noSubband = true;
 
     /** Used to process abortion. */
-    private J2KImageWriter writer;
 
     /** Indicates a <code>raster</code> rather than a <code>RenderedImage</code>
      *  to be encoded.
@@ -143,16 +140,12 @@ public class RenderedImageSrc implements BlkImgDataSrc {
      *
      * @param raster The <code>Raster</code> to be encoded.
      * @param param The <code>J2KImageWriteParamJava</code> used in encoding.
-     * @param writer The <code>J2KImageWriter</code> performs the encoding.
      *
      * @param IOException If an error occurs while opening the file.
      */
-    public RenderedImageSrc(Raster raster,
-                            J2KImageWriteParamJava param,
-                            J2KImageWriter writer) {
+    public DummyRenderedImageSrc(Raster raster, J2KImageWriteParamJava param) {
         this.raster = raster;
         this.param = param;
-        this.writer = writer;
         this.inputIsRaster = true;
 
         sourceRegion = param.getSourceRegion();
@@ -178,16 +171,12 @@ public class RenderedImageSrc implements BlkImgDataSrc {
      *
      * @param src The <code>RenderedImage</code> to be encoded.
      * @param param The <code>J2KImageWriteParamJava</code> used in encoding.
-     * @param writer The <code>J2KImageWriter</code> performs the encoding.
      *
      * @param IOException If an error occurs while opening the file.
      * */
-    public RenderedImageSrc(RenderedImage src,
-                            J2KImageWriteParamJava param,
-                            J2KImageWriter writer) {
+    public DummyRenderedImageSrc(RenderedImage src, J2KImageWriteParamJava param) {
         this.src = src;
         this.param = param;
-        this.writer = writer;
 
         sourceRegion = param.getSourceRegion();
 
@@ -686,130 +675,6 @@ public class RenderedImageSrc implements BlkImgDataSrc {
     }
 
 
-    /**
-     * Returns, in the blk argument, the block of image data containing the
-     * specifed rectangular area, in the specified component. The data is
-     * returned, as a reference to the internal data, if any, instead of as a
-     * copy, therefore the returned data should not be modified.
-     *
-     * <P> After being read the coefficients are level shifted by subtracting
-     * 2^(nominal bit range - 1)
-     *
-     * <P>The rectangular area to return is specified by the 'ulx', 'uly', 'w'
-     * and 'h' members of the 'blk' argument, relative to the current
-     * tile. These members are not modified by this method. The 'offset' and
-     * 'scanw' of the returned data can be arbitrary. See the 'DataBlk' class.
-     *
-     * <P>If the data array in <tt>blk</tt> is <tt>null</tt>, then a new one
-     * is created if necessary. The implementation of this interface may
-     * choose to return the same array or a new one, depending on what is more
-     * efficient. Therefore, the data array in <tt>blk</tt> prior to the
-     * method call should not be considered to contain the returned data, a
-     * new array may have been created. Instead, get the array from
-     * <tt>blk</tt> after the method has returned.
-     *
-     * <P>The returned data always has its 'progressive' attribute unset
-     * (i.e. false).
-     *
-     * <P>When an I/O exception is encountered the JJ2KExceptionHandler is
-     * used. The exception is passed to its handleException method. The action
-     * that is taken depends on the action that has been registered in
-     * JJ2KExceptionHandler. See JJ2KExceptionHandler for details.
-     *
-     * <P>This method implements buffering for the 3 components: When the
-     * first one is asked, all the 3 components are read and stored until they
-     * are needed.
-     *
-     * @param blk Its coordinates and dimensions specify the area to
-     * return. Some fields in this object are modified to return the data.
-     *
-     * @param c The index of the component from which to get the data. Only 0,
-     * 1 and 3 are valid.
-     *
-     * @return The requested DataBlk
-     *
-     * @see #getCompData
-     *
-     * @see JJ2KExceptionHandler
-     */
-    public final DataBlk getInternCompData(DataBlk blk, int c) {
-        if (writer != null && writer.getAbortRequest())
-            throw new RuntimeException(J2KImageWriter.WRITE_ABORTED);
-
-        if (barr == null)
-            barr = new int[nc][];
-
-	// Check type of block provided as an argument
-	if(blk.getDataType()!=DataBlk.TYPE_INT){
-	    if(intBlk==null)
-		intBlk = new DataBlkInt(blk.ulx,blk.uly,blk.w,blk.h);
-	    else{
-		intBlk.ulx = blk.ulx;
-		intBlk.uly = blk.uly;
-		intBlk.w = blk.w;
-		intBlk.h = blk.h;
-	    }
-	    blk = intBlk;
-	}
-
-        float percentage =
-            (getTileIdx() + (blk.uly + 1.0F) / blk.h) / getNumTiles();
-        writer.processImageProgressWrapper(percentage * 100.0F);
-
-        // If asking a component for the first time for this block, read the 3
-        // components
-        if ((barr[c] == null) ||
-            (dbi.ulx > blk.ulx) || (dbi.uly > blk.uly) ||
-            (dbi.ulx+dbi.w < blk.ulx+blk.w) ||
-            (dbi.uly+dbi.h < blk.uly+blk.h)) {
-            int k,j,i,mi;
-
-            // Reset data arrays if needed
-            if (barr[c] == null || barr[c].length < blk.w*blk.h) {
-                barr[c] = new int[blk.w*blk.h];
-            }
-            blk.setData(barr[c]);
-
-            for (i = (c + 1) % nc; i != c; i = (i + 1) % nc)
-                if (barr[i] == null || barr[i].length < blk.w*blk.h) {
-                    barr[i] = new int[blk.w*blk.h];
-                }
-
-            // set attributes of the DataBlk used for buffering
-            dbi.ulx = blk.ulx;
-            dbi.uly = blk.uly;
-            dbi.w = blk.w;
-            dbi.h = blk.h;
-
-            // get data from the image
-            if (aTile == null) {
-                aTile = getTile(co.x, co.y);
-                Rectangle temp = aTile.getBounds();
-                aTile = aTile.createTranslatedChild(temp.x-minX,
-                                                    temp.y-minY);
-            }
-
-            for (i = 0; i < nc ; i++) {
-                aTile.getSamples(blk.ulx, blk.uly, blk.w, blk.h, i, barr[i]);
-                for (k = 0; k < barr[i].length; k++)
-                    barr[i][k] -= dcOffset;
-            }
-            //getByteData(raster, new Rectangle(blk.ulx, blk.uly, blk.w, blk.h), barr);
-
-            // Set buffer attributes
-            blk.setData(barr[c]);
-            blk.offset = 0;
-            blk.scanw = blk.w;
-        } else { //Asking for the 2nd or 3rd block component
-            blk.setData(barr[c]);
-            blk.offset = (blk.ulx-dbi.ulx)*dbi.w+blk.ulx-dbi.ulx;
-            blk.scanw = dbi.scanw;
-        }
-
-        // Turn off the progressive attribute
-        blk.progressive = false;
-	return blk;
-    }
 
     /**
      * Returns, in the blk argument, a block of image data containing the
@@ -1029,4 +894,9 @@ public class RenderedImageSrc implements BlkImgDataSrc {
     private int mapToSourceY(int y) {
         return y * scaleY + yOffset;
     }
+
+    public final DataBlk getInternCompData(DataBlk blk, int c) {
+        throw new UnsupportedOperationException();
+    }
+
 }

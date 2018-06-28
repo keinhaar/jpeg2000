@@ -49,7 +49,7 @@ import jj2000.j2k.IntegerSpec;
 import jj2000.j2k.ModuleSpec;
 import jj2000.j2k.codestream.ProgressionType;
 
-import com.github.jaiimageio.jpeg2000.impl.J2KImageWriteParamJava;
+import com.github.jpeg2000.J2KImageWriteParamJava;
 
 /**
  * This class extends ModuleSpec class for progression type(s) and progression

@@ -55,7 +55,7 @@ import jj2000.j2k.util.ArrayUtil;
 import jj2000.j2k.util.MathUtil;
 import jj2000.j2k.wavelet.analysis.SubbandAn;
 
-import com.github.jaiimageio.jpeg2000.impl.J2KImageWriteParamJava;
+import com.github.jpeg2000.J2KImageWriteParamJava;
 /**
  * This class builds packets and keeps the state information of packet
  * interdependencies. It also supports saving the state and reverting

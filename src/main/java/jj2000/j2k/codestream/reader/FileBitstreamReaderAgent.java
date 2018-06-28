@@ -71,7 +71,7 @@ import jj2000.j2k.util.MathUtil;
 import jj2000.j2k.util.MsgLogger;
 import jj2000.j2k.wavelet.synthesis.SubbandSyn;
 
-import com.github.jaiimageio.jpeg2000.impl.J2KImageReadParamJava;
+import com.github.jpeg2000.J2KImageReadParamJava;
 
 /**
  * This class reads the bit stream (with the help of HeaderDecoder for tile

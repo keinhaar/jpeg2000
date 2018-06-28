@@ -56,7 +56,7 @@ import jj2000.j2k.wavelet.analysis.CBlkWTDataInt;
 import jj2000.j2k.wavelet.analysis.CBlkWTDataSrc;
 import jj2000.j2k.wavelet.analysis.SubbandAn;
 
-import com.github.jaiimageio.jpeg2000.impl.J2KImageWriteParamJava;
+import com.github.jpeg2000.J2KImageWriteParamJava;
 
 /**
  * This class implements scalar quantization of integer or floating-point

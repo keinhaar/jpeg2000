@@ -59,7 +59,7 @@ import jj2000.j2k.util.MsgLogger;
 import jj2000.j2k.util.ProgressWatch;
 import jj2000.j2k.wavelet.analysis.SubbandAn;
 
-import com.github.jaiimageio.jpeg2000.impl.J2KImageWriteParamJava;
+import com.github.jpeg2000.J2KImageWriteParamJava;
 /**
  * This implements the EBCOT post compression rate allocation algorithm. This
  * algorithm finds the most suitable truncation points for the set of

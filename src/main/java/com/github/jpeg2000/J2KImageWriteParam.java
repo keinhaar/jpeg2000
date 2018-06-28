@@ -42,7 +42,7 @@
  * $Date: 2006/09/20 23:23:30 $
  * $State: Exp $
  */
-package com.github.jaiimageio.jpeg2000;
+package com.github.jpeg2000;
 
 import java.util.Locale;
 

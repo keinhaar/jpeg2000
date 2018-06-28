@@ -42,7 +42,7 @@
  * $Date: 2006/09/29 19:25:32 $
  * $State: Exp $
  */
-package com.github.jaiimageio.jpeg2000;
+package com.github.jpeg2000;
 
 import javax.imageio.ImageReadParam;
 

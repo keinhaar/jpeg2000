@@ -60,7 +60,7 @@ import jj2000.j2k.util.MathUtil;
 import jj2000.j2k.wavelet.Subband;
 import jj2000.j2k.wavelet.WaveletTransform;
 
-import com.github.jaiimageio.jpeg2000.impl.J2KImageWriteParamJava;
+import com.github.jpeg2000.J2KImageWriteParamJava;
 /**
  * This class implements the ForwardWT with the full-page approach to be used
  * either with integer or floating-point filters

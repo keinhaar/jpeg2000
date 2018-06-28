@@ -42,7 +42,7 @@
  * $Date: 2006/10/03 23:40:14 $
  * $State: Exp $
  */
-package com.github.jaiimageio.jpeg2000.impl;
+package com.github.jpeg2000;
 
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -77,8 +77,6 @@ import jj2000.j2k.io.RandomAccessIO;
 import jj2000.j2k.quantization.dequantizer.Dequantizer;
 import jj2000.j2k.roi.ROIDeScaler;
 import jj2000.j2k.wavelet.synthesis.InverseWT;
-
-import com.github.jaiimageio.impl.common.ImageUtil;
 
 public class J2KReadState {
     /** The input stream we read from */

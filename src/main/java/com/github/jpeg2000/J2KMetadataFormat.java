@@ -42,7 +42,7 @@
  * $Date: 2005/04/27 18:23:01 $
  * $State: Exp $
  */
-package com.github.jaiimageio.jpeg2000.impl;
+package com.github.jpeg2000;
 
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;

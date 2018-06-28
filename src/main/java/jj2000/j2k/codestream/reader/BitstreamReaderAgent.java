@@ -56,7 +56,7 @@ import jj2000.j2k.util.MathUtil;
 import jj2000.j2k.wavelet.Subband;
 import jj2000.j2k.wavelet.synthesis.SubbandSyn;
 
-import com.github.jaiimageio.jpeg2000.impl.J2KImageReadParamJava;
+import com.github.jpeg2000.J2KImageReadParamJava;
 
 /**
  * This is the generic interface for bit stream reader agents. A bit stream

@@ -42,7 +42,7 @@
  * $Date: 2006/09/20 23:23:30 $
  * $State: Exp $
  */
-package com.github.jaiimageio.jpeg2000.impl;
+package com.github.jpeg2000;
 
 import java.awt.Rectangle;
 import java.awt.image.Raster;
@@ -65,8 +65,6 @@ import jj2000.j2k.quantization.QuantStepSizeSpec;
 import jj2000.j2k.quantization.QuantTypeSpec;
 import jj2000.j2k.roi.MaxShiftSpec;
 import jj2000.j2k.wavelet.analysis.AnWTFilterSpec;
-
-import com.github.jaiimageio.jpeg2000.J2KImageWriteParam;
 
 /**
  * A subclass of <code>ImageWriteParam</code> for writing images in
@@ -1100,7 +1098,7 @@ public class J2KImageWriteParamJava extends ImageWriteParam {
                 new PrecinctSizeSpec(numTiles,
                                      numComponents,
                                      ModuleSpec.SPEC_TYPE_TILE_COMP,
-                                     new RenderedImageSrc(imgsrc, this, null),
+                                     new DummyRenderedImageSrc(imgsrc, this),
                                      decompositionLevel,
                                      this,
                                      values);
@@ -1109,7 +1107,7 @@ public class J2KImageWriteParamJava extends ImageWriteParam {
                 new PrecinctSizeSpec(numTiles,
                                      numComponents,
                                      ModuleSpec.SPEC_TYPE_TILE_COMP,
-                                     new RenderedImageSrc(raster, this, null),
+                                     new DummyRenderedImageSrc(raster, this),
                                      decompositionLevel,
                                      this,
                                      values);

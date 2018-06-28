@@ -53,7 +53,7 @@ import jj2000.j2k.codestream.writer.CodestreamWriter;
 import jj2000.j2k.codestream.writer.HeaderEncoder;
 import jj2000.j2k.image.ImgDataAdapter;
 
-import com.github.jaiimageio.jpeg2000.impl.J2KImageWriteParamJava;
+import com.github.jpeg2000.J2KImageWriteParamJava;
 /**
  * This is the abstract class from which post-compression rate allocators
  * which generate layers should inherit. The source of data is a

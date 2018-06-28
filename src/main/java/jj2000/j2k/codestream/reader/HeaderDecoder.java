@@ -76,7 +76,7 @@ import jj2000.j2k.wavelet.synthesis.SynWTFilter;
 import jj2000.j2k.wavelet.synthesis.SynWTFilterFloatLift9x7;
 import jj2000.j2k.wavelet.synthesis.SynWTFilterIntLift5x3;
 
-import com.github.jaiimageio.jpeg2000.impl.J2KImageReadParamJava;
+import com.github.jpeg2000.J2KImageReadParamJava;
 
 /**
  * This class reads Main and Tile-part headers from the codestream. It is

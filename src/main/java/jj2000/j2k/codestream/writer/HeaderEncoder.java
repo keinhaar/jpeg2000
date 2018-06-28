@@ -68,7 +68,7 @@ import jj2000.j2k.wavelet.analysis.AnWTFilter;
 import jj2000.j2k.wavelet.analysis.ForwardWT;
 import jj2000.j2k.wavelet.analysis.SubbandAn;
 
-import com.github.jaiimageio.jpeg2000.impl.J2KImageWriteParamJava;
+import com.github.jpeg2000.J2KImageWriteParamJava;
 /**
  * This class writes almost of the markers and marker segments in main header
  * and in tile-part headers. It is created by the run() method of the Encoder

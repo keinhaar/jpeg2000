@@ -59,7 +59,7 @@ import jj2000.j2k.wavelet.Subband;
 import jj2000.j2k.wavelet.analysis.CBlkWTData;
 import jj2000.j2k.wavelet.analysis.SubbandAn;
 
-import com.github.jaiimageio.jpeg2000.impl.J2KImageWriteParamJava;
+import com.github.jpeg2000.J2KImageWriteParamJava;
 /**
  * This class deals with the ROI functionality.
  *

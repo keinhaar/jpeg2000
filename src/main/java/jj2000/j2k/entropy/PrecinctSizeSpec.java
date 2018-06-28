@@ -53,7 +53,7 @@ import jj2000.j2k.codestream.Markers;
 import jj2000.j2k.image.BlkImgDataSrc;
 import jj2000.j2k.util.MathUtil;
 
-import com.github.jaiimageio.jpeg2000.impl.J2KImageWriteParamJava;
+import com.github.jpeg2000.J2KImageWriteParamJava;
 
 /**
  * This class extends ModuleSpec class for precinct partition sizes holding

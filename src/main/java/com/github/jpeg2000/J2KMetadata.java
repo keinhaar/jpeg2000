@@ -42,7 +42,7 @@
  * $Date: 2006/09/22 23:07:25 $
  * $State: Exp $
  */
-package com.github.jaiimageio.jpeg2000.impl;
+package com.github.jpeg2000;
 
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_ColorSpace;
@@ -92,7 +92,7 @@ public class J2KMetadata extends IIOMetadata implements Cloneable {
     public J2KMetadata() {
         super(true,  // Supports standard format
               nativeMetadataFormatName,  // and a native format
-              "com.github.jaiimageio.jpeg2000.impl.J2KMetadataFormat",
+              "com.github.jpeg2000.J2KMetadataFormat",
               null, null);  // No other formats
 
         format = (J2KMetadataFormat)getMetadataFormat(nativeMetadataFormatName);
@@ -108,8 +108,7 @@ public class J2KMetadata extends IIOMetadata implements Cloneable {
      * @param reader The <code>J2KImageReader</code> calling this
      * constructor, to which warnings should be sent.
      */
-    public J2KMetadata(ImageInputStream iis,
-                       J2KImageReader reader) throws IOException {
+    public J2KMetadata(ImageInputStream iis) throws IOException {
         this();
         RandomAccessIO in = new IISRandomAccessIO(iis);
 

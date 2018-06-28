@@ -53,7 +53,7 @@ import jj2000.j2k.image.ImgDataAdapter;
 import jj2000.j2k.util.MathUtil;
 import jj2000.j2k.wavelet.analysis.AnWTFilterSpec;
 
-import com.github.jaiimageio.jpeg2000.impl.J2KImageWriteParamJava;
+import com.github.jpeg2000.J2KImageWriteParamJava;
 /**
  * This class apply component transformations to the tiles depending
  * on user specifications. These transformations can be used to

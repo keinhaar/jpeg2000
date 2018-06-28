@@ -51,7 +51,7 @@ import jj2000.j2k.image.BlkImgDataSrc;
 import jj2000.j2k.image.ImgData;
 import jj2000.j2k.image.ImgDataAdapter;
 
-import com.github.jaiimageio.jpeg2000.impl.J2KImageWriteParamJava;
+import com.github.jpeg2000.J2KImageWriteParamJava;
 /**
  * This abstract class represents the forward wavelet transform functional
  * block. The functional block may actually be comprised of several classes

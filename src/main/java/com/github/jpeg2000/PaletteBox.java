@@ -42,7 +42,7 @@
  * $Date: 2005/02/11 05:01:36 $
  * $State: Exp $
  */
-package com.github.jaiimageio.jpeg2000.impl;
+package com.github.jpeg2000;
 
 import java.awt.image.IndexColorModel;
 
@@ -51,8 +51,6 @@ import javax.imageio.metadata.IIOMetadataNode;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import com.github.jaiimageio.impl.common.ImageUtil;
 
 /** This class is designed to represent a palette box for JPEG 2000 JP2 file
  *  format.  A palette box has a length, and a fixed type of "pclr".

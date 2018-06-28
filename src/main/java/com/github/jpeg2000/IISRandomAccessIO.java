@@ -42,7 +42,7 @@
  * $Date: 2006/08/08 00:31:47 $
  * $State: Exp $
  */
-package com.github.jaiimageio.jpeg2000.impl;
+package com.github.jpeg2000;
 
 import java.io.IOException;
 import java.nio.ByteOrder;

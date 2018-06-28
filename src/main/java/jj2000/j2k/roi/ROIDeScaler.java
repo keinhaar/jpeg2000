@@ -50,7 +50,7 @@ import jj2000.j2k.quantization.dequantizer.CBlkQuantDataSrcDec;
 import jj2000.j2k.wavelet.synthesis.MultiResImgDataAdapter;
 import jj2000.j2k.wavelet.synthesis.SubbandSyn;
 
-import com.github.jaiimageio.jpeg2000.impl.J2KImageReadParamJava;
+import com.github.jpeg2000.J2KImageReadParamJava;
 
 /**
  * This class takes care of the de-scaling of ROI coefficients. The de-scaler

@@ -1,5 +1,5 @@
 /*
- * $RCSfile: XMLBox.java,v $
+ * $RCSfile: SignatureBox.java,v $
  *
  * 
  * Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.
@@ -42,76 +42,53 @@
  * $Date: 2005/02/11 05:01:37 $
  * $State: Exp $
  */
-package com.github.jaiimageio.jpeg2000.impl;
-
+package com.github.jpeg2000;
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadataNode;
 
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-/** This class is defined to represent a XML box of JPEG JP2
- *  file format.  This type of box has a length, a type of "xml ".  Its
- *  content is a text string of a XML instance.
+/** This class is defined to represent a Signature Box of JPEG JP2
+ *  file format.  This type of box has a fixed length of 12, a type of "jP  "
+ *  and a four byte content of 0x0D0A870A, which is used to detects of the
+ *  common file transmission errors which substitutes <CR><LF> with <LF> or
+ *  vice versa.
  */
-public class XMLBox extends Box {
-    /** Cache the element names for this box's xml definition */
-    private static String[] elementNames = {"Content"};
-
-    /** This method will be called by the getNativeNodeForSimpleBox of the
-     *  class Box to get the element names.
-     */
-    public static String[] getElementNames() {
-        return elementNames;
+public class SignatureBox extends Box {
+    /** Constructs a <code>SignatureBox</code>. */
+    public SignatureBox() {
+        super(12, 0x6A502020, null);
     }
 
-    /** Create a Box from its content. */
-    public XMLBox(byte[] data) {
-        super(8 + data.length, 0x786D6C20, data);
-    }
-
-    /** Constructs a <code>UUIDListBox</code> based on the provided
+    /** Constructs a <code>SignatureBox</code> based on the provided
      *  <code>org.w3c.dom.Node</code>.
      */
-    public XMLBox(Node node) throws IIOInvalidTreeException {
+    public SignatureBox(Node node) throws IIOInvalidTreeException {
         super(node);
-        NodeList children = node.getChildNodes();
-
-        for (int i = 0; i < children.getLength(); i++) {
-            Node child = children.item(i);
-            String name = child.getNodeName();
-
-            if ("Content".equals(name)) {
-		String value = child.getNodeValue();
-		if (value != null)
-		    data = value.getBytes();
-		else if (child instanceof IIOMetadataNode) {
-		    value = (String)((IIOMetadataNode)child).getUserObject();
-		    if (value != null)
-			data = value.getBytes();
-		}
-            }
-        }
     }
 
-    /** Creates an <code>IIOMetadataNode</code> from this XML
+    /** Constructs a <code>SignatureBox</code> based on the provided
+     *  byte array.
+     */
+    public SignatureBox(byte[] data) throws IIOInvalidTreeException {
+        super(12, 0x6A502020, data);
+    }
+
+    /** Creates an <code>IIOMetadataNode</code> from this signature
      *  box.  The format of this node is defined in the XML dtd and xsd
      *  for the JP2 image file.
      */
     public IIOMetadataNode getNativeNode() {
-        try {
-            IIOMetadataNode node = new IIOMetadataNode(Box.getName(getType()));
-            setDefaultAttributes(node);
-	    IIOMetadataNode child = new IIOMetadataNode("Content");
-	    String value = null;
-	    if (data != null)
-		value = new String(data);
-	    child.setUserObject(value);
-	    child.setNodeValue(value);
-	    node.appendChild(child);    
-            return node;
-        } catch (Exception e) {
-            throw new IllegalArgumentException(I18N.getString("Box0"));
-        }
+        IIOMetadataNode node = new IIOMetadataNode(Box.getName(getType()));
+        setDefaultAttributes(node);
+        node.setAttribute("Signature", Integer.toString(0x0D0A870A));
+        return node;
+    }
+
+    protected void compose() {
+        if (data != null)
+            return;
+        data = new byte[]{(byte)0x0D, (byte)0x0A, (byte)0x87, (byte)0x0A};
     }
 }
+
