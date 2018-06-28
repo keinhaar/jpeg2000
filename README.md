@@ -15,7 +15,7 @@ History (which may be wrong)
 ----------------------------
 The JJ2000 package was originally written by a team from Swiss Federal Institute of Technology-EPFL, Ericsson Radio Systems AB and Canon Research Centre France S.A during 1999-2000 as part of the development of the original JPEG2000 specification. The source code was made available at http://jpeg2000.epfl.ch/ and the final release there was version 5.1 (this site disappeared around 2010; an archive version is available at http://web.archive.org/web/20100818165144/http://jpeg2000.epfl.ch/)
 
-The code was then adopted by Sun as part of their JAI project (Java Advanced Imaging). It was hosted at https://jai-imageio.dev.java.net/, with  changes made by Sun to fit into their JAI architecture. This eventually shut down too (disappearing completely in 2016 after a long period of bitrot) and the code was migrated to Github and https://github.com/jai-imageio/jai-imageio-jpeg2000 in April 2010, where this fork came from. The [JAI project](https://github.com/jai-imageio/) is still active
+The code was then adopted by Sun as part of their JAI project (Java Advanced Imaging). It was hosted at https://jai-imageio.dev.java.net/, with  changes made by Sun to fit into their JAI architecture. This eventually shut down too (disappearing completely in 2016 after a long period of bitrot) and the code was migrated to Github and https://github.com/jai-imageio/jai-imageio-jpeg2000 in April 2010, where this fork came from. The [JAI project](https://github.com/jai-imageio/) is still active.
 
 The original pre-JAI code from JJ2000 also moved, to https://code.google.com/archive/p/jj2000/. From there it was copied to Github at https://github.com/Unidata/jj2000, and probably elsewhere too.
 
