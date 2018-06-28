@@ -196,6 +196,10 @@ public class PaletteBox extends Box {
         return lut;
     }
 
+    public int getComponent(int entry, int component) {
+        return lut[component][entry] & 0xFF;
+    }
+
     /** creates an <code>IIOMetadataNode</code> from this palette box.
      *  The format of this node is defined in the XML dtd and xsd
      *  for the JP2 image file.

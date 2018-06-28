@@ -65,7 +65,7 @@ import com.github.jpeg2000.ComponentMappingBox;
 import com.github.jpeg2000.DataEntryURLBox;
 import com.github.jpeg2000.FileTypeBox;
 import com.github.jpeg2000.HeaderBox;
-import com.github.jpeg2000.J2KMetadata;
+import com.github.jpeg2000.FileFormatReaderListener;
 import com.github.jpeg2000.PaletteBox;
 import com.github.jpeg2000.ResolutionBox;
 import com.github.jpeg2000.SignatureBox;
@@ -96,7 +96,7 @@ public class FileFormatReader implements FileFormatBoxes{
     private ColorModel colorModel = null;
 
     /** The meta data */
-    private J2KMetadata metadata;
+    private FileFormatReaderListener listener;
 
     /** Parameters in header box */
     private int width;
@@ -135,9 +135,9 @@ public class FileFormatReader implements FileFormatBoxes{
      *
      * @param in The RandomAccessIO from which to read the file format
      * */
-    public FileFormatReader(RandomAccessIO in, J2KMetadata metadata){
+    public FileFormatReader(RandomAccessIO in, FileFormatReaderListener listener){
         this.in = in;
-        this.metadata = metadata;
+        this.listener = listener;
     }
 
 
@@ -189,8 +189,8 @@ public class FileFormatReader implements FileFormatBoxes{
                 return;
             }
 
-            if (metadata != null)
-                metadata.addNode(new SignatureBox());
+            if (listener != null)
+                listener.addNode(new SignatureBox());
 
             // Read all remaining boxes
             while(!lastBoxFound){
@@ -274,10 +274,10 @@ public class FileFormatReader implements FileFormatBoxes{
                     readResolutionBox(box, length);
                     break;
                 default:
-                    if (metadata != null) {
+                    if (listener != null) {
                         byte[] data = new byte[length];
                         in.readFully(data, 0, length);
-                        metadata.addNode(new Box(length + 8,
+                        listener.addNode(new Box(length + 8,
                                                  box,
                                                  longLength,
                                                  data));
@@ -339,8 +339,8 @@ public class FileFormatReader implements FileFormatBoxes{
         if(!foundComp)
             return false;
 
-        if (metadata != null)
-            metadata.addNode(new FileTypeBox(FT_BR, minorVersion, comp));
+        if (listener != null)
+            listener.addNode(new FileTypeBox(FT_BR, minorVersion, comp));
 
         return true;
     }
@@ -398,9 +398,9 @@ public class FileFormatReader implements FileFormatBoxes{
         unknownColor = in.readByte();
         intelProp = in.readByte();
 
-        if (metadata != null) {
+        if (listener != null) {
 
-            metadata.addNode(new HeaderBox(height, width, numComp, bitDepth,
+            listener.addNode(new HeaderBox(height, width, numComp, bitDepth,
                                            compressionType, unknownColor,
                                            intelProp));
         }
@@ -447,10 +447,10 @@ public class FileFormatReader implements FileFormatBoxes{
      * This method reads the contents of the Intellectual property box
      * */
     public void readIntPropertyBox(int length) throws IOException {
-        if (metadata != null) {
+        if (listener != null) {
             byte[] data = new byte[length];
             in.readFully(data, 0, length);
-            metadata.addNode(new Box(length + 8, 0x6A703269, data));
+            listener.addNode(new Box(length + 8, 0x6A703269, data));
         }
     }
 
@@ -458,10 +458,10 @@ public class FileFormatReader implements FileFormatBoxes{
      * This method reads the contents of the XML box
      */
     public void readXMLBox(int length) throws IOException {
-        if (metadata != null) {
+        if (listener != null) {
             byte[] data = new byte[length];
             in.readFully(data, 0, length);
-            metadata.addNode(new XMLBox(data));
+            listener.addNode(new XMLBox(data));
         }
     }
 
@@ -469,10 +469,10 @@ public class FileFormatReader implements FileFormatBoxes{
      * This method reads the contents of the XML box
      */
     public void readURLBox(int length) throws IOException {
-        if (metadata != null) {
+        if (listener != null) {
             byte[] data = new byte[length];
             in.readFully(data, 0, length);
-            metadata.addNode(new DataEntryURLBox(data));
+            listener.addNode(new DataEntryURLBox(data));
         }
     }
 
@@ -480,10 +480,10 @@ public class FileFormatReader implements FileFormatBoxes{
      * This method reads the contents of the Intellectual property box
      */
     public void readUUIDBox(int length) throws IOException {
-        if (metadata != null) {
+        if (listener != null) {
             byte[] data = new byte[length];
             in.readFully(data, 0, length);
-            metadata.addNode(new UUIDBox(data));
+            listener.addNode(new UUIDBox(data));
         }
     }
 
@@ -491,10 +491,10 @@ public class FileFormatReader implements FileFormatBoxes{
      * This method reads the contents of the UUID List box
      * */
     public void readUUIDListBox(int length) throws IOException {
-        if (metadata != null) {
+        if (listener != null) {
             byte[] data = new byte[length];
             in.readFully(data, 0, length);
-            metadata.addNode(new UUIDListBox(data));
+            listener.addNode(new UUIDListBox(data));
         }
     }
 
@@ -531,8 +531,8 @@ public class FileFormatReader implements FileFormatBoxes{
                 lut[c][n] = (byte)val;
             }
         }
-        if (metadata != null) {
-            metadata.addNode(new PaletteBox(length, compSize, lut));
+        if (listener != null) {
+            listener.addNode(new PaletteBox(length, compSize, lut));
         }
     }
 
@@ -551,8 +551,8 @@ public class FileFormatReader implements FileFormatBoxes{
             maps[i] = in.readByte();
         }
 
-        if (metadata != null) {
-            metadata.addNode(new ComponentMappingBox(comps, type, maps));
+        if (listener != null) {
+            listener.addNode(new ComponentMappingBox(comps, type, maps));
         }
     }
 
@@ -573,8 +573,8 @@ public class FileFormatReader implements FileFormatBoxes{
             cType[i] = in.readShort();
             associations[i] = in.readShort();
         }
-        if (metadata != null) {
-            metadata.addNode(new ChannelDefinitionBox(channels, cType, associations));
+        if (listener != null) {
+            listener.addNode(new ChannelDefinitionBox(channels, cType, associations));
         }
     }
 
@@ -584,8 +584,8 @@ public class FileFormatReader implements FileFormatBoxes{
         bitDepths = new byte[length];
         in.readFully(bitDepths, 0, length);
 
-        if (metadata != null) {
-            metadata.addNode(new BitsPerComponentBox(bitDepths));
+        if (listener != null) {
+            listener.addNode(new BitsPerComponentBox(bitDepths));
         }
     }
 
@@ -608,8 +608,8 @@ public class FileFormatReader implements FileFormatBoxes{
         } else  // read EnumCS field
             colorSpaceType = in.readInt();
 
-        if (metadata != null) {
-            metadata.addNode(new ColorSpecificationBox(method, prec, approx,
+        if (listener != null) {
+            listener.addNode(new ColorSpecificationBox(method, prec, approx,
                                                        colorSpaceType,
                                                        profile));
         }
@@ -620,8 +620,8 @@ public class FileFormatReader implements FileFormatBoxes{
     public void readResolutionBox(int type, int length)throws IOException {
         byte[] data = new byte[length];
         in.readFully(data, 0, length);
-        if (metadata != null) {
-            metadata.addNode(new ResolutionBox(type, data));
+        if (listener != null) {
+            listener.addNode(new ResolutionBox(type, data));
         }
     }
 

@@ -74,7 +74,7 @@ import org.w3c.dom.NodeList;
 /**
  * Metadata for the J2K plug-in.
  */
-public class J2KMetadata extends IIOMetadata implements Cloneable {
+public class J2KMetadata extends IIOMetadata implements Cloneable, FileFormatReaderListener {
     static final String nativeMetadataFormatName =
         "com_sun_media_imageio_plugins_jpeg2000_image_1.0";
 
