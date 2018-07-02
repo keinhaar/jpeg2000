@@ -260,7 +260,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent
             tnbytes = (int)(j2krparam.getDecodingRate() * hd.getMaxCompImgWidth() *
                         hd.getMaxCompImgHeight()) / 8;
         //isTruncMode = !j2krparam.getParsing();
-        isTruncMode = true;
+        isTruncMode = false;
 
         // Check if quit conditions are being used
         //int ncbQuit = j2krparam.getNCBQuit();
