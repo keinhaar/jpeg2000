@@ -19,7 +19,7 @@ RandomAccessIO in = new BEBufferedRandomAccessFile(infile, "r", 8192);
 ImageInputStream iin = new ImageInputStream(in);
 OutputStream out = new BufferedOutputStream(new FileOutputStream(outfile));
 if (iin.getNumComponents() == 1) {
-    out.write(("P4 "+iin.getWidth()+" "+iin.getHeight()+" 255\n").getBytes("ISO-8859-1"));
+    out.write(("P5 "+iin.getWidth()+" "+iin.getHeight()+" 255\n").getBytes("ISO-8859-1"));
 } else if (iin.getNumComponents() == 3) {
     out.write(("P6 "+iin.getWidth()+" "+iin.getHeight()+" 255\n").getBytes("ISO-8859-1"));
 }
