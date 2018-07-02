@@ -119,10 +119,10 @@ public class ComponentMappingBox extends Box {
         map = new byte[len];
 
         for (int i = 0, j = 0; i < len; i++) {
-            components[i] =
-                (short)(((data[j++] & 0xFF) << 8) | (data[j++] & 0xFF));
+            components[i] = (short)(((data[j++] & 0xFF) << 8) | (data[j++] & 0xFF));
             type[i] = data[j++];
             map[i] = data[j++];
+            System.out.println("* cmap: i="+i+" c="+components[i]+" "+type[i]+" "+map[i]);
         }
     }
 

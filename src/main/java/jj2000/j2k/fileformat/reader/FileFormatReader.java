@@ -252,7 +252,7 @@ public class FileFormatReader implements FileFormatBoxes{
                     readURLBox(length);
                     break;
                 case PALETTE_BOX:
-                    readPaletteBox(length + 8);
+                    readPaletteBox(length);
                     break;
                 case BITS_PER_COMPONENT_BOX:
                     readBitsPerComponentBox(length);
@@ -283,8 +283,9 @@ public class FileFormatReader implements FileFormatBoxes{
                                                  data));
                     }
                 }
-                if(!lastBoxFound)
+                if(!lastBoxFound) {
                     in.seek(pos+length);
+                }
             }
         }catch( EOFException e ){
             throw new Error("EOF reached before finding Contiguous "+
@@ -500,59 +501,21 @@ public class FileFormatReader implements FileFormatBoxes{
 
     /** This method reads the content of the palette box */
     public void readPaletteBox(int length) throws IOException {
-        // Get current position in file
-        int pos = in.getPos();
-
-        int lutSize = in.readShort();
-        int numComp = in.readByte();
-        compSize = new byte[numComp];
-
-        for (int i = 0; i < numComp; i++) {
-            compSize[i] = (byte)in.readByte();
-        }
-
-        lut = new byte[numComp][lutSize];
-
-        for (int n=0; n < lutSize; n++) {
-            for (int c = 0; c < numComp; c++) {
-                int depth = 1 + (compSize[c] & 0x7F);
-                if (depth > 32)
-                    depth = 32;
-                int numBytes = (depth + 7)>>3;
-                int mask = (1 << depth) - 1;
-                byte[] buf = new byte[numBytes];
-                in.readFully(buf, 0, numBytes);
-
-                int val = 0;
-
-                for (int k = 0; k < numBytes; k++) {
-                    val = buf[k] + (val << 8);
-                }
-                lut[c][n] = (byte)val;
-            }
-        }
         if (listener != null) {
-            listener.addNode(new PaletteBox(length, compSize, lut));
+            byte[] data = new byte[length];
+            in.readFully(data, 0, length);
+            listener.addNode(new PaletteBox(data));
         }
     }
 
-    /** Read the component mapping channel.
+    /**
+     * Read the component mapping channel.
      */
     public void readComponentMappingBox(int length)throws IOException {
-        int num = length / 4;
-
-        comps = new short[num];
-        type = new byte[num];
-        maps = new byte[num];
-
-        for (int i = 0; i < num; i++) {
-            comps[i] = in.readShort();
-            type[i] = in.readByte();
-            maps[i] = in.readByte();
-        }
-
         if (listener != null) {
-            listener.addNode(new ComponentMappingBox(comps, type, maps));
+            byte[] data = new byte[length];
+            in.readFully(data, 0, length);
+            listener.addNode(new ComponentMappingBox(data));
         }
     }
 
@@ -563,18 +526,10 @@ public class FileFormatReader implements FileFormatBoxes{
      *
      */
     public void readChannelDefinitionBox(int length)throws IOException {
-        int num = in.readShort();
-        channels = new short[num];
-        cType = new short[num];
-        associations = new short[num];
-
-        for (int i = 0; i < num; i++) {
-            channels[i] = in.readShort();
-            cType[i] = in.readShort();
-            associations[i] = in.readShort();
-        }
         if (listener != null) {
-            listener.addNode(new ChannelDefinitionBox(channels, cType, associations));
+            byte[] data = new byte[length];
+            in.readFully(data, 0, length);
+            listener.addNode(new ChannelDefinitionBox(data));
         }
     }
 
@@ -583,7 +538,6 @@ public class FileFormatReader implements FileFormatBoxes{
     public void readBitsPerComponentBox(int length)throws IOException {
         bitDepths = new byte[length];
         in.readFully(bitDepths, 0, length);
-
         if (listener != null) {
             listener.addNode(new BitsPerComponentBox(bitDepths));
         }
@@ -592,35 +546,19 @@ public class FileFormatReader implements FileFormatBoxes{
     /** Read the color specifications.
      */
     public void readColourSpecificationBox(int length)throws IOException {
-        // read METHOD field
-        byte method = (byte)in.readByte();
-
-        // read PREC field
-        byte prec = (byte)in.readByte();
-
-        // read APPROX field
-        byte approx = (byte)in.readByte();
-
-        if (method == 2) {
-            byte[] data = new byte[length - 3];
-            in.readFully(data, 0, data.length);
-            profile = ICC_Profile.getInstance(data);
-        } else  // read EnumCS field
-            colorSpaceType = in.readInt();
-
         if (listener != null) {
-            listener.addNode(new ColorSpecificationBox(method, prec, approx,
-                                                       colorSpaceType,
-                                                       profile));
+            byte[] data = new byte[length];
+            in.readFully(data, 0, length);
+            listener.addNode(new ColorSpecificationBox(data));
         }
     }
 
     /** Read the resolution.
      */
     public void readResolutionBox(int type, int length)throws IOException {
-        byte[] data = new byte[length];
-        in.readFully(data, 0, length);
         if (listener != null) {
+            byte[] data = new byte[length];
+            in.readFully(data, 0, length);
             listener.addNode(new ResolutionBox(type, data));
         }
     }
@@ -634,8 +572,9 @@ public class FileFormatReader implements FileFormatBoxes{
     public long[] getCodeStreamPos(){
         int size = codeStreamPos.size();
         long[] pos = new long[size];
-        for(int i=0 ; i<size ; i++)
+        for (int i=0 ; i<size ; i++) {
             pos[i]=((Integer)(codeStreamPos.elementAt(i))).longValue();
+        }
         return pos;
     }
 

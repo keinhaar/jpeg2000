@@ -61,56 +61,22 @@ import org.w3c.dom.NodeList;
  * Currently, only 8-bit color index is supported.
  */
 public class PaletteBox extends Box {
-    /** The value of the data elements.
-     */
     private int numEntries;
-    private int numComps;
-    private byte[] bitDepth;
-    private byte[][] lut;
+    private int numc;
+    private int[] bitDepth;
+    private int[] lut;
 
-    /** Compute the length of this box. */
-    private static int computeLength(IndexColorModel icm) {
-        int size = icm.getMapSize();
-        int[] comp = icm.getComponentSize();
-        return 11 + comp.length + size * comp.length;
-    }
-
-    /** Gets the size of the components or the bit depth for all the color
-     *  coomponents.
-     */
-    private static byte[] getCompSize(IndexColorModel icm) {
-        int[] comp = icm.getComponentSize();
-        int size = comp.length;
-        byte[] buf = new byte[size];
-        for (int i = 0; i < size; i++)
-            buf[i] = (byte)(comp[i] - 1);
-        return buf;
-    }
-
-    /** Gets the LUT from the <code>IndexColorModel</code> as an two-dimensional
-     *  byte array.
-     */
-    private static byte[][] getLUT(IndexColorModel icm) {
-        int[] comp = icm.getComponentSize();
-        int size = icm.getMapSize();
-        byte[][] lut = new byte[comp.length][size];
-        icm.getReds(lut[0]);
-        icm.getGreens(lut[1]);
-        icm.getBlues(lut[2]);
-        if (comp.length == 4)
-            icm.getAlphas(lut[3]);
-        return lut;
-    }
-
-    /** Constructs a <code>PlatteBox</code> from an
-     *  <code>IndexColorModel</code>.
+    /**
+     * Constructs a <code>PlatteBox</code> from an
+     * <code>IndexColorModel</code>.
      */
     public PaletteBox(IndexColorModel icm) {
-        this(computeLength(icm), getCompSize(icm), getLUT(icm));
+        this(computeLength(icm), icm.hasAlpha() ? new int[] { 8, 8, 8, 8 } : new int[] { 8, 8, 8 }, getLUT(icm));
     }
 
-    /** Constructs a <code>PlatteBox</code> from an
-     *  <code>org.w3c.dom.Node</code>.
+    /**
+     * Constructs a <code>PlatteBox</code> from an
+     * <code>org.w3c.dom.Node</code>.
      */
     public PaletteBox(Node node) throws IIOInvalidTreeException {
         super(node);
@@ -127,11 +93,11 @@ public class PaletteBox extends Box {
             }
 
             if ("NumberColors".equals(name)) {
-                numComps = Box.getIntElementValue(child);
+                numc = Box.getIntElementValue(child);
             }
 
             if ("BitDepth".equals(name)) {
-                bitDepth = Box.getByteArrayElementValue(child);
+                bitDepth = Box.getIntArrayElementValue(child);
             }
 
             if ("LUT".equals(name)) {
@@ -151,29 +117,59 @@ public class PaletteBox extends Box {
 
         //XXX: currently only 8-bit LUT is supported so no decode is needed
         // For more refer to read palette box section.
-        lut = new byte[numComps][numEntries];
+        lut = new int[numc*numEntries];
 
-        for (int i = 0; i < numComps; i++)
-            for (int j = 0; j < numEntries; j++)
-                lut[i][j] = tlut[j][i];
+        int k = 0;
+        for (int i = 0; i < numc; i++) {
+            for (int j = 0; j < numEntries; j++) {
+                lut[k++] = tlut[j][i];
+            }
+        }
 
     }
 
-    /** Constructs a <code>PlatteBox</code> from the provided length, bit
+    /**
+     * Constructs a <code>PlatteBox</code> from the provided length, bit
      *  depths of the color components and the LUT.
      */
-    public PaletteBox(int length, byte[] comp, byte[][] lut) {
+    public PaletteBox(int length, int[] depths, int[] lut) {
         super(length, 0x70636C72, null);
-        this.bitDepth = comp;
+        this.bitDepth = depths;
         this.lut = lut;
-        this.numEntries = lut[0].length;
-        this.numComps = lut.length;
+        this.numc = depths.length;
+        this.numEntries = lut.length / numc;
     }
 
     /** Constructs a <code>PlatteBox</code> from the provided byte array.
      */
     public PaletteBox(byte[] data) {
         super(8 + data.length, 0x70636C72, data);
+    }
+
+    /** Compute the length of this box. */
+    private static int computeLength(IndexColorModel icm) {
+        int size = icm.getMapSize();
+        int numc = icm.hasAlpha() ? 4 : 3;
+        return 11 + numc + size * numc;
+    }
+
+    /** Gets the LUT from the <code>IndexColorModel</code> as an two-dimensional
+     *  byte array.
+     */
+    private static int[] getLUT(IndexColorModel icm) {
+        int size = icm.getMapSize();
+        int numc = icm.hasAlpha() ? 3 : 4;   // IndexColorModel always RGB or RGBA
+        int[] lut = new int[size * numc];
+        int k = 0;
+        for (int i=0;i<size;i++) {
+            lut[k++] = icm.getRed(i);
+            lut[k++] = icm.getGreen(i);
+            lut[k++] = icm.getBlue(i);
+            if (numc == 4) {
+                lut[k++] = icm.getAlpha(i);
+            }
+        }
+        return lut;
     }
 
     /** Return the number of palette entries. */
@@ -183,21 +179,19 @@ public class PaletteBox extends Box {
 
     /** Return the number of color components. */
     public int getNumComp() {
-        return numComps;
+        return numc;
     }
 
-    /** Return the bit depths for all the color components. */
-    public byte[] getBitDepths() {
-        return bitDepth;
+    public int getComponentDepth(int component) {
+        return (bitDepth[component] & 0x7F) + 1;
     }
 
-    /** Return the LUT. */
-    public byte[][] getLUT() {
-        return lut;
+    public boolean isComponentSigned(int component) {
+        return (bitDepth[component] & 0x80) != 0;
     }
 
-    public int getComponent(int entry, int component) {
-        return lut[component][entry] & 0xFF;
+    public int getComponentValue(int entry, int component) {
+        return lut[entry * numc + component];
     }
 
     /** creates an <code>IIOMetadataNode</code> from this palette box.
@@ -214,8 +208,8 @@ public class PaletteBox extends Box {
         node.appendChild(child);
 
         child = new IIOMetadataNode("NumberColors");
-        child.setUserObject(new Integer(numComps));
-	child.setNodeValue("" + numComps);
+        child.setUserObject(new Integer(numc));
+	child.setNodeValue("" + numc);
         node.appendChild(child);
 
         child = new IIOMetadataNode("BitDepth");
@@ -226,9 +220,10 @@ public class PaletteBox extends Box {
         child = new IIOMetadataNode("LUT");
         for (int i = 0; i < numEntries; i++) {
             IIOMetadataNode child1 = new IIOMetadataNode("LUTRow");
-            byte[] row = new byte[numComps];
-            for (int j = 0; j < numComps; j++)
-                row[j] = lut[j][i];
+            byte[] row = new byte[numc];
+            for (int j = 0; j < numc; j++) {
+                row[j] = (byte)getComponentValue(i, j);
+            }
 
             child1.setUserObject(row);
 	    child1.setNodeValue(ImageUtil.convertObjectToString(row));
@@ -239,33 +234,47 @@ public class PaletteBox extends Box {
         return node;
     }
 
+    @Override
     protected void parse(byte[] data) {
-        if (data == null)
-            return;
-        numEntries = (short)(((data[0] & 0xFF) << 8) | (data[1] & 0xFF));
-
-        numComps = data[2];
-        bitDepth = new byte[numComps];
-        System.arraycopy(data, 3, bitDepth, 0, numComps);
-
-        lut = new byte[numComps][numEntries];
-        for (int i = 0, k = 3 + numComps; i < numEntries; i++)
-            for (int j = 0; j < numComps; j++)
-                lut[j][i] = data[k++];
+        System.out.println("PLT: "+new java.math.BigInteger(1, data).toString(16));
+        int k = 0;
+        numEntries = ((data[k++]&0xFF)<<8) | (data[k++]&0xFF);
+        numc = data[k++]&0xFF;
+        bitDepth = new int[numc];
+        for (int i=0;i<numc;i++) {
+            bitDepth[i] = data[k++]&0xFF;
+        }
+        lut = new int[data.length - k];
+        for (int i=0;i<lut.length;i++) {
+            int c = i % numc;
+            int d = getComponentDepth(c);
+            boolean signed = isComponentSigned(c);
+            if (d <= 8) {
+                lut[i] = signed ? (int)data[k++] : data[k++]&0xFF;
+            } else {
+                lut[i] = ((signed ? (int)data[k++] : data[k++]&0xFF)<<8) | (data[k++]&0xFF);
+            }
+        }
     }
 
     protected void compose() {
-        if (data != null)
+        if (data != null) {
             return;
-        data = new byte[3 + numComps + numEntries * numComps];
-        data[0] = (byte)(numEntries >> 8);
-        data[1] = (byte)(numEntries & 0xFF);
+        }
+        data = new byte[3 + numc + numEntries * numc];
+        int k = 0;
+        data[k++] = (byte)(numEntries >> 8);
+        data[k++] = (byte)(numEntries & 0xFF);
+        data[k++] = (byte)numc;
 
-        data[2] = (byte)numComps;
-        System.arraycopy(bitDepth, 0, data, 3, numComps);
+        for (int i=0;i<numc;i++) {
+            data[k++] = (byte)bitDepth[i];
+        }
 
-        for (int i = 0, k = 3 + numComps; i < numEntries; i++)
-            for (int j = 0; j < numComps; j++)
-                data[k++] = lut[j][i];
+        for (int i = 0; i < numEntries; i++) {
+            for (int j = 0; j < numc; j++) {
+                data[k++] = (byte)getComponentValue(i, j);
+            }
+        }
     }
 }

@@ -1,20 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="jpeg2000" default="jar">
-    <property name="build.sysclasspath" value="ignore"/>
+<project name="jpeg2000" default="test">
+  <property name="build.sysclasspath" value="ignore"/>
 
-    <target name="clean">
-        <delete dir="target"/>
-    </target>
+  <target name="clean">
+    <delete dir="target"/>
+  </target>
 
-    <target name="compile">
-        <mkdir dir="target/classes"/>
-        <javac source="1.5" target="1.5" destdir="target/classes" srcdir="src/main/java" debug="true"/>
-        <copy todir="target/classes">
-          <fileset dir="src/main/resources" />
-        </copy>
-    </target>
+  <target name="compile">
+    <mkdir dir="target/classes/main"/>
+    <mkdir dir="target/classes/test"/>
+    <javac source="1.5" target="1.5" destdir="target/classes/main" srcdir="src/main/java" debug="true"/>
+    <copy todir="target/classes/main">
+      <fileset dir="src/main/resources" />
+    </copy>
+  </target>
 
-    <target name="jar" depends="compile">
-        <jar destfile="target/jj2000.jar" basedir="target/classes"/>
-    </target>
+  <target name="jar" depends="compile">
+    <jar destfile="target/jj2000.jar" basedir="target/classes/main"/>
+  </target>
+
+  <target name="test" depends="jar">
+    <javac source="1.5" target="1.5" destdir="target/classes/test" srcdir="src/test/java" debug="true">
+      <classpath>
+        <pathelement location="target/jj2000.jar"/>
+      </classpath>
+    </javac>
+    <jar destfile="target/test.jar">
+      <fileset dir="target/classes/test" />
+      <zipfileset src="target/jj2000.jar"/>
+      <manifest>
+        <attribute name="Main-Class" value="Test"/>
+      </manifest>
+    </jar>
+  </target>
+
 </project>

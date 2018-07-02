@@ -367,20 +367,20 @@ public class J2KMetadata extends IIOMetadata implements Cloneable, FileFormatRea
             if (palette != null) {
                 subNode.setAttribute("value", "" + palette.getNumComp());
                 subNode = new IIOMetadataNode("Palette");
-                byte[][] lut = palette.getLUT();
 
-                int size = lut[0].length;
-                int numComp = lut.length;
+                int size = palette.getNumEntries();
+                int numComp = palette.getNumComp();
 
                 for (int i = 0; i < size; i++) {
                     IIOMetadataNode subNode1 =
                         new IIOMetadataNode("PaletteEntry");
                     subNode1.setAttribute("index", ""+i);
-                    subNode1.setAttribute("red", "" + (lut[0][i]&0xff));
-                    subNode1.setAttribute("green", "" + (lut[1][i]&0xff));
-                    subNode1.setAttribute("blue", "" + (lut[2][i]&0xff));
-                    if (numComp == 4)
-                        subNode1.setAttribute("alpha", "" + (lut[3][i]&0xff));
+                    subNode1.setAttribute("red", "" + palette.getComponentValue(i, 0));
+                    subNode1.setAttribute("green", "" + palette.getComponentValue(i, 1));
+                    subNode1.setAttribute("blue", "" + palette.getComponentValue(i, 2));
+                    if (numComp == 4) {
+                        subNode1.setAttribute("alpha", "" + palette.getComponentValue(i, 3));
+                    }
                     subNode.appendChild(subNode1);
                 }
                 node.appendChild(subNode);

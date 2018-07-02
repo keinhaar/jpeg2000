@@ -5,7 +5,31 @@ This is another version of the "JJ2000" package, which provides an API for readi
 
 How to build
 ------------
-Download and run "ant". A single Jar is built in "target/jj2000.jar". There are no external dependencies
+Download and run "ant". The jar "target/jj2000.jar" contains the API code, the "target/test.jar" is a standalone Jar for testing (run "java -jar target/test.jar" for help). There are no external dependencies
+
+How to read a JP2 or JPX image
+------------------------------
+This will create a PNM from a grayscale or RGB image.
+```
+import java.io.*;
+import com.github.jpeg2000.*;
+import jj2000.j2k.io.*;
+
+RandomAccessIO in = new BEBufferedRandomAccessFile(infile, "r", 8192);
+ImageInputStream iin = new ImageInputStream(in);
+OutputStream out = new BufferedOutputStream(new FileOutputStream(outfile));
+if (iin.getNumComponents() == 1) {
+    out.write(("P4 "+iin.getWidth()+" "+iin.getHeight()+" 255\n").getBytes("ISO-8859-1"));
+} else if (iin.getNumComponents() == 3) {
+    out.write(("P6 "+iin.getWidth()+" "+iin.getHeight()+" 255\n").getBytes("ISO-8859-1"));
+}
+int c;
+while ((c=iin.read()) >= 0) {
+    out.write(c);
+}
+out.close();
+```
+
 
 License
 --------------------

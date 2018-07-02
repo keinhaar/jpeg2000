@@ -96,8 +96,7 @@ public class ColorSpecificationBox extends Box {
     /** Creates a <code>ColorSpecificationBox</code> from the provided data
      *  elements.
      */
-    public ColorSpecificationBox(byte m, byte p, byte a, int ecs,
-                                 ICC_Profile profile) {
+    public ColorSpecificationBox(byte m, byte p, byte a, int ecs, ICC_Profile profile) {
         super(computeLength(m, profile), 0x636F6C72, null);
         this.method = m;
         this.precedence = p;
@@ -141,13 +140,13 @@ public class ColorSpecificationBox extends Box {
             }
 
             if ("ICCProfile".equals(name)) {
-                if (child instanceof IIOMetadataNode)
-                    profile =
-                        (ICC_Profile)((IIOMetadataNode)child).getUserObject();
-		else {
+                if (child instanceof IIOMetadataNode) {
+                    profile = (ICC_Profile)((IIOMetadataNode)child).getUserObject();
+		} else {
 		    String value = node.getNodeValue();
-		    if (value != null)
-			profile = ICC_Profile.getInstance(Box.parseByteArray(value));
+		    if (value != null) {
+                        profile = ICC_Profile.getInstance(Box.parseByteArray(value));
+                    }
 		}
             }
         }
@@ -158,6 +157,10 @@ public class ColorSpecificationBox extends Box {
         return method;
     }
 
+    public String toString() {
+        return "{colr: meth="+method+" prec="+precedence+" approx="+approximation+" ecs="+ecs+"}";
+
+    }
     /** Returns <code>Precedence</code>. */
     public byte getPrecedence() {
         return precedence;
@@ -187,6 +190,7 @@ public class ColorSpecificationBox extends Box {
     }
 
     protected void parse(byte[] data) {
+        System.out.println("COLR: "+(new java.math.BigInteger(1, data).toString(16)));
         method = data[0];
         precedence = data[1];
         approximation = data[2];
