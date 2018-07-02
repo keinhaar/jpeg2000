@@ -26,19 +26,24 @@ import jj2000.j2k.io.RandomAccessIO;
 import jj2000.j2k.io.EndianType;
 
 /**
+ * <p>
  * An InputStream giving access to the decoded image data. Tiles are decoded on demand, meaning
  * the entire image doesn't have to be decoded in memory. The image is converted to 8-bit, YCbCr
  * images are converted to RGB and component subsampling is removed, but otherwise the image data
  * is unchanged.
+ * </p>
  * 
  * @author http://bfo.com
  */
 public class ImageInputStream extends InputStream implements FileFormatReaderListener, MsgLogger {
-    // final
-    private final RandomAccessIO in;
-    private final Thread registerThread;
-    private final BlkImgDataSrc src;          // image data source
-    private final int ntw, nth, numtx, numty, iw, ih, scanline, numc;
+    private RandomAccessIO in;
+    private Thread registerThread;
+    private BlkImgDataSrc src;          // image data source
+    private DecoderSpecs decSpec;
+    private InverseWT invWT;
+    private BitstreamReaderAgent breader;
+    private int fulliw, fullih, numtx, numty, iw, ih, scanline, numc, fullscale, scale;
+    private final int[] depth;
     private int[] channels;
 
     // variable
@@ -65,32 +70,69 @@ public class ImageInputStream extends InputStream implements FileFormatReaderLis
 
         HeaderInfo hi = new HeaderInfo();
         HeaderDecoder hd = new HeaderDecoder(in, j2kreadparam, hi);
-        int[] depth = new int[hd.getNumComps()];
+        depth = new int[hd.getNumComps()];
         for (int i=0;i<depth.length;i++) {
             depth[i] = hd.getOriginalBitDepth(i);
         }
-        DecoderSpecs decSpec = hd.getDecoderSpecs();
-        BitstreamReaderAgent breader = BitstreamReaderAgent.createInstance(in, hd, j2kreadparam, decSpec, false, hi);
+        decSpec = hd.getDecoderSpecs();
+        breader = BitstreamReaderAgent.createInstance(in, hd, j2kreadparam, decSpec, false, hi);
+        if (isInterrupted()) {
+            throw new InterruptedIOException();
+        }
         EntropyDecoder entdec = hd.createEntropyDecoder(breader, j2kreadparam);
+        if (isInterrupted()) {
+            throw new InterruptedIOException();
+        }
         ROIDeScaler roids = hd.createROIDeScaler(entdec, j2kreadparam, decSpec);
+        if (isInterrupted()) {
+            throw new InterruptedIOException();
+        }
         Dequantizer deq = hd.createDequantizer(roids, depth, decSpec);
-        InverseWT invWT = InverseWT.createInstance(deq, decSpec);
-        invWT.setImgResLevel(breader.getImgRes());
-        ImgDataConverter converter = new ImgDataConverter(invWT, 0);
-        InvCompTransf ictransf = new InvCompTransf(converter, decSpec, depth);
-        this.src = ictransf;
-        
-        ntw = src.getNomTileWidth();
-        nth = src.getNomTileHeight();
-        iw = src.getImgWidth();
-        ih = src.getImgHeight();
-        numtx = (iw + ntw - 1) / ntw;
-        numty = (ih + nth - 1) / nth;
-        numc = src.getNumComps();
-        scanline = iw * numc;
-        buf = new byte[scanline * nth];
-        pos = length = buf.length;
-        db = new DataBlkInt(0, 0, ntw, nth);
+        if (isInterrupted()) {
+            throw new InterruptedIOException();
+        }
+        invWT = InverseWT.createInstance(deq, decSpec);
+        if (isInterrupted()) {
+            throw new InterruptedIOException();
+        }
+
+        fullscale = breader.getImgRes();
+        fulliw = breader.getImgWidth(fullscale);
+        fullih = breader.getImgHeight(fullscale);
+        setTargetSize(fulliw, fullih);
+    }
+
+    /**
+     * Set the target size for the output image. The default size is
+     * the full size of the image, but it's possible to access lower
+     * resolution versions of the image by calling this method with
+     * the desired size. While the file image size may not match
+     * exactly, it will be as close as usefully possible.
+     * @param targetwidth the desired target width of the image
+     * @param targetheight the desired target height of the image
+     */
+    public void setTargetSize(int targetwidth, int targetheight) {
+        // Find the best scale so that final width/height are >= 1 and < 2
+        // times the desired width.
+        int newscale = fullscale;
+        for (int i=fullscale;i>=1;i--) {
+            if (targetwidth > breader.getImgWidth(i) || targetheight > breader.getImgHeight(i)) {
+                break;
+            }
+            newscale = i;
+        }
+        if (newscale != scale) {
+            scale = newscale;
+            invWT.setImgResLevel(scale);
+            ImgDataConverter converter = new ImgDataConverter(invWT, 0);
+            src = new InvCompTransf(converter, decSpec, depth);
+            iw = src.getImgWidth();
+            ih = src.getImgHeight();
+            numtx = src.getNumTiles(null).x;
+            numty = src.getNumTiles(null).y;
+            numc = src.getNumComps();
+            scanline = iw * numc;
+        }
     }
 
     /**
@@ -140,9 +182,11 @@ public class ImageInputStream extends InputStream implements FileFormatReaderLis
     }
 
     public void printmsg(int sev, String msg) {
+//        System.out.println(msg);
     }
 
     public void println(String str, int flind, int ind) {
+//        System.out.println(str);
     }
 
     //--------------------------------------------------------------
@@ -157,21 +201,32 @@ public class ImageInputStream extends InputStream implements FileFormatReaderLis
             for (int tx=0;tx<numtx;tx++) {
                 src.setTile(tx, ty);
                 final int tileix = src.getTileIdx();
-                length = scanline * src.getTileHeight();
-                final int itx = tx * ntw;
+                // Determine tile width/height - this is not as simple as
+                // calling src.getTileWidth when using less than full res.
+                int tw = 0;
+                int th = 0;
+                for (int iz=0;iz<numc;iz++) {
+                    tw = Math.max(tw, src.getTileCompWidth(tileix, iz));
+                    th = Math.max(th, src.getTileCompHeight(tileix, iz));
+                }
+                if (db == null) {
+                    // First pass
+                    buf = new byte[scanline * th];
+                    db = new DataBlkInt(0, 0, tw, th);
+                }
+                db.w = tw;
+                db.h = th;
+                length = scanline * th;
+                final int itx = tx * tw;
                 final int ity = 0;
                 for (int iz=0;iz<numc;iz++) {
                     int riz = channels[iz];     // output channel, could differ from input channel
-                    final int tw = src.getTileCompWidth(tileix, iz);
-                    final int th = src.getTileCompHeight(tileix, iz);
-                    db.w = tw;
-                    db.h = th;
                     final int depth = src.getNomRangeBits(iz);
                     final int mid = 1 << (depth - 1);
                     final int csx = src.getCompSubsX(iz);
                     final int csy = src.getCompSubsY(iz);
                     final int fb = src.getFixedPoint(iz);
-//                    System.out.println("iwh="+iw+","+ih+" txy="+tx+","+ty+" of "+numtx+","+numty+" twh="+tw+","+th+" ntwh="+src.getNomTileWidth()+","+src.getNomTileHeight()+" iz="+iz+"="+riz+" ss="+csx+","+csy+" d="+depth+" mid="+mid+" fb="+fb);
+//                    System.out.println("iwh="+iw+"x"+ih+" txy="+tx+"x"+ty+" of "+numtx+","+numty+" tcwh="+tw+"x"+th+" twh="+src.getTileWidth()+"x"+src.getTileHeight()+" ntwh="+src.getNomTileWidth()+"x"+src.getNomTileHeight()+" iz="+iz+"="+riz+" ss="+csx+"x"+csy+" d="+depth+" mid="+mid+" fb="+fb+" sl="+scanline+" buf="+buf.length);
                     int[] shift = null;
                     if (depth < 8) {
                         shift = new int[1<<depth];
@@ -184,6 +239,9 @@ public class ImageInputStream extends InputStream implements FileFormatReaderLis
                     } while (db.progressive);
                     // Main loop: retrieve value, scaled to 8 bits and adjust midpoint
                     for (int iy=0;iy<th;iy++) {
+                        if (isInterrupted()) {
+                            throw new InterruptedIOException();
+                        }
                         for (int ix=0;ix<tw;ix++) {
                             int val = (db.data[db.offset + iy*tw + ix] >> fb) + mid;
                             if (depth == 8) {
@@ -200,6 +258,9 @@ public class ImageInputStream extends InputStream implements FileFormatReaderLis
                         // Component is subsampled; use bilinear interpolation to fill the gaps. Quick and dirty,
                         // tested with limited test data
                         for (int iy=0;iy<th;iy++) {
+                            if (isInterrupted()) {
+                                throw new InterruptedIOException();
+                            }
                             for (int ix=0;ix<tw;ix++) {
                                 // Values on each of the four corners of our space
                                 int v00 = buf[((ity + (iy * csy)) * scanline) + ((itx + (ix * csx)) * numc) + riz] & 0xFF;
@@ -208,7 +269,7 @@ public class ImageInputStream extends InputStream implements FileFormatReaderLis
                                 int v11 = iy + 1 == th ? (ix + 1 == tw ? v00 : v10) : (ix + 1 == tw ? v10 : buf[((ity + ((iy+1) * csy)) * scanline) + ((itx + ((ix+1) * csx)) * numc) + riz] & 0xFF);
                                 for (int jy=0;jy<csy;jy++) {
                                     for (int jx=0;jx<csx;jx++) {
-                                        if (jx+jy != 0 && ix + jx < ntw && iy + jy < nth) {
+                                        if (jx+jy != 0 && ix + jx < tw && iy + jy < th) {
                                             // q = interpolated(v00, v01, v10, v11)
                                             int q0 = v00 + ((v10 - v00) * jx / (csx-1));
                                             int q1 = v01 + ((v11 - v01) * jx / (csx-1));
@@ -224,6 +285,9 @@ public class ImageInputStream extends InputStream implements FileFormatReaderLis
             }
         }
         ty++;
+        if (ty == numty) {
+            free();
+        }
         pos = 0;
         return true;
     }
@@ -280,9 +344,22 @@ public class ImageInputStream extends InputStream implements FileFormatReaderLis
         return buf.length - pos;
     }
 
+    private void free() throws IOException {
+        if (in != null) {
+            FacilityManager.unregisterMsgLogger(registerThread);
+            registerThread = null;
+            in.close();
+            in = null;
+            src = null;
+            decSpec = null;
+            invWT = null;
+            breader = null;
+            db = null;
+        }
+    }
+
     public void close() throws IOException {
-        FacilityManager.unregisterMsgLogger(registerThread);
-        in.close();
+        free();
     }
 
     //--------------------------------------------------------------
@@ -374,6 +451,15 @@ public class ImageInputStream extends InputStream implements FileFormatReaderLis
             case 17: return ColorSpace.getInstance(ColorSpace.CS_GRAY);
         }
         return null;
+    }
+
+    /**
+     * Return true if the reading process should throw an InterruptedIOException.
+     * By default this just checks if Thread.isInterrupted, but different Thread
+     * interruption mechanisms can be used by overriding this method.
+     */
+    protected boolean isInterrupted() {
+        return Thread.currentThread().isInterrupted();
     }
 
 

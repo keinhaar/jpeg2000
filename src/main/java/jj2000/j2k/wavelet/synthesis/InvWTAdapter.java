@@ -145,9 +145,11 @@ public abstract class InvWTAdapter implements InvWT {
         int rl = 10000;
         int mrl;
         int nc = mressrc.getNumComps();
-        for(int c=0; c<nc; c++) {
+        for (int c=0; c<nc; c++) {
             mrl = mressrc.getSynSubbandTree(tIdx,c).resLvl;
-            if(mrl<rl) rl = mrl;
+            if (mrl < rl) {
+                rl = mrl;
+            }
         }
         return mressrc.getTileWidth(rl);
     }
@@ -255,6 +257,9 @@ public abstract class InvWTAdapter implements InvWT {
     /**
      * Returns the width in pixels of the specified tile-component
      *
+     * <p>This default implementation returns the value of the source at the
+     * current reconstruction resolution level.</p>
+     *
      * @param t Tile index
      *
      * @param c The index of the component, from 0 to N-1.
@@ -262,10 +267,7 @@ public abstract class InvWTAdapter implements InvWT {
      * @return The width in pixels of component <tt>n</tt> in tile <tt>t</tt>.
      * */
     public int getTileCompWidth(int t,int c) {
-        // Retrieves the tile-component maximum resolution index and gets the
-        // width from the source.
-        int rl = mressrc.getSynSubbandTree(t,c).resLvl;
-        return mressrc.getTileCompWidth(t,c,rl);
+        return mressrc.getTileCompWidth(t,c,reslvl);
     }
 
     /**
@@ -282,10 +284,7 @@ public abstract class InvWTAdapter implements InvWT {
      * <tt>t</tt>. 
      * */
     public int getTileCompHeight(int t,int c) {
-        // Retrieves the tile-component maximum resolution index and gets the
-        // height from the source.
-        int rl = mressrc.getSynSubbandTree(t,c).resLvl;
-        return mressrc.getTileCompHeight(t,c,rl);
+        return mressrc.getTileCompHeight(t,c,reslvl);
     }
 
     /**
