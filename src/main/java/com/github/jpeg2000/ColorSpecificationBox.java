@@ -190,7 +190,6 @@ public class ColorSpecificationBox extends Box {
     }
 
     protected void parse(byte[] data) {
-        System.out.println("COLR: "+(new java.math.BigInteger(1, data).toString(16)));
         method = data[0];
         precedence = data[1];
         approximation = data[2];

@@ -122,7 +122,6 @@ public class ComponentMappingBox extends Box {
             components[i] = (short)(((data[j++] & 0xFF) << 8) | (data[j++] & 0xFF));
             type[i] = data[j++];
             map[i] = data[j++];
-            System.out.println("* cmap: i="+i+" c="+components[i]+" "+type[i]+" "+map[i]);
         }
     }
 

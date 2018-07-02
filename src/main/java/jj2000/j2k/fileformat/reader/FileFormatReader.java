@@ -702,4 +702,8 @@ public class FileFormatReader implements FileFormatBoxes{
         }
         return colorModel;
     }
+
+    public int getNumComponents() {
+        return numComp;
+    }
 }

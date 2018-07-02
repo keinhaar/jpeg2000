@@ -1,7 +1,7 @@
 import jj2000.j2k.io.*;
 import com.github.jpeg2000.*;
 import java.io.*;
-
+import java.awt.color.ColorSpace;
 
 public class Test {
     public static void main(String[] args) throws IOException {
@@ -16,24 +16,46 @@ public class Test {
             }
             File outfile = new File(s + ".pnm");
             RandomAccessIO in = new BEBufferedRandomAccessFile(infile, "r", 8192);
-            ImageInputStream iin = new ImageInputStream(in);
-            OutputStream out = new BufferedOutputStream(new FileOutputStream(outfile));
-            System.out.println("# Creating "+outfile);
+            final int[] enumcs = new int[1];
+            ImageInputStream iin = new ImageInputStream(in) {
+                protected ColorSpace createColorSpace(int e) {
+                    enumcs[0] = e;
+                    return super.createColorSpace(e);
+                }
+            };
+
+            System.out.print("# Creating "+outfile+": "+iin.getWidth()+"x"+iin.getHeight()+"x"+iin.getNumComponents());
+            if (iin.isIndexed()) {
+                System.out.print(" palette="+iin.getIndexSize());
+            }
+            ColorSpace cs = iin.getColorSpace();
+            if (cs == null) {
+                System.out.println(" cs=unknown("+enumcs[0]+")");
+            } else if (enumcs[0] == 16) {
+                System.out.println(" cs=sRGB");
+            } else if (enumcs[0] == 17) {
+                System.out.println(" cs=gray");
+            } else {
+                System.out.println(" cs=icc("+cs.getNumComponents()+")");
+            }
+
+            int type = 0;
             if (iin.getNumComponents() == 1) {
                 // Indexed images will also be caught in this block
-                out.write(("P4 "+iin.getWidth()+" "+iin.getHeight()+" 255\n").getBytes("ISO-8859-1"));
+                type = 5;
             } else if (iin.getNumComponents() == 3) {
                 // Lab color images will also be caught in this block
-                out.write(("P6 "+iin.getWidth()+" "+iin.getHeight()+" 255\n").getBytes("ISO-8859-1"));
-            } else {
-                // CMYK images here; there is no PNM format for CMYK, make one up.
-                out.write(("PX "+iin.getWidth()+" "+iin.getHeight()+" 255\n").getBytes("ISO-8859-1"));
+                type = 6;
             }
-            int c;
-            while ((c=iin.read()) >= 0) {
-                out.write(c);
+            if (type != 0) {
+                OutputStream out = new BufferedOutputStream(new FileOutputStream(outfile));
+                out.write(("P"+type+" "+iin.getWidth()+" "+iin.getHeight()+" 255\n").getBytes("ISO-8859-1"));
+                int c;
+                while ((c=iin.read()) >= 0) {
+                    out.write(c);
+                }
+                out.close();
             }
-            out.close();
         }
     }
 }

@@ -236,7 +236,6 @@ public class PaletteBox extends Box {
 
     @Override
     protected void parse(byte[] data) {
-        System.out.println("PLT: "+new java.math.BigInteger(1, data).toString(16));
         int k = 0;
         numEntries = ((data[k++]&0xFF)<<8) | (data[k++]&0xFF);
         numc = data[k++]&0xFF;

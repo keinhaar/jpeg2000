@@ -25,12 +25,20 @@ import jj2000.j2k.roi.ROIDeScaler;
 import jj2000.j2k.io.RandomAccessIO;
 import jj2000.j2k.io.EndianType;
 
+/**
+ * An InputStream giving access to the decoded image data. Tiles are decoded on demand, meaning
+ * the entire image doesn't have to be decoded in memory. The image is converted to 8-bit, YCbCr
+ * images are converted to RGB and component subsampling is removed, but otherwise the image data
+ * is unchanged.
+ * 
+ * @author http://bfo.com
+ */
 public class ImageInputStream extends InputStream implements FileFormatReaderListener, MsgLogger {
     // final
     private final RandomAccessIO in;
-    private Thread registerThread;
-    private BlkImgDataSrc src; // image data source
-    private int ntw, nth, numtx, numty, iw, ih, scanline, numc;
+    private final Thread registerThread;
+    private final BlkImgDataSrc src;          // image data source
+    private final int ntw, nth, numtx, numty, iw, ih, scanline, numc;
     private int[] channels;
 
     // variable
@@ -42,6 +50,9 @@ public class ImageInputStream extends InputStream implements FileFormatReaderLis
     private int[][] palette;
     private ColorSpace cs;
 
+    /**
+     * Create a new ImageInputStream
+     */
     public ImageInputStream(RandomAccessIO is) throws IOException {
         this.in = is;
         registerThread = Thread.currentThread();
@@ -54,13 +65,9 @@ public class ImageInputStream extends InputStream implements FileFormatReaderLis
 
         HeaderInfo hi = new HeaderInfo();
         HeaderDecoder hd = new HeaderDecoder(in, j2kreadparam, hi);
-        numc = hd.getNumComps();
-        int[] depth = new int[numc];
-        for (int i=0;i<numc;i++) {
+        int[] depth = new int[hd.getNumComps()];
+        for (int i=0;i<depth.length;i++) {
             depth[i] = hd.getOriginalBitDepth(i);
-            // PDF/A3: "The bit-depth of the JPEG2000 data shall have a value in the
-            // range 1 to 38. All colour channels in the JPEG2000 data shall have the
-            // same bit-depth."
         }
         DecoderSpecs decSpec = hd.getDecoderSpecs();
         BitstreamReaderAgent breader = BitstreamReaderAgent.createInstance(in, hd, j2kreadparam, decSpec, false, hi);
@@ -73,10 +80,6 @@ public class ImageInputStream extends InputStream implements FileFormatReaderLis
         InvCompTransf ictransf = new InvCompTransf(converter, decSpec, depth);
         this.src = ictransf;
         
-        channels = new int[numc];
-        for (int i=0;i<numc;i++) {
-            channels[i] = i;
-        }
         ntw = src.getNomTileWidth();
         nth = src.getNomTileHeight();
         iw = src.getImgWidth();
@@ -90,8 +93,18 @@ public class ImageInputStream extends InputStream implements FileFormatReaderLis
         db = new DataBlkInt(0, 0, ntw, nth);
     }
 
-    public void addNode(Box box) {
-        if (box instanceof PaletteBox) {
+    /**
+     * Parse the specified Box from the JP2H header
+     * @param box the Box
+     */
+    @Override public void addNode(Box box) {
+        if (box instanceof HeaderBox) {
+            HeaderBox b = (HeaderBox) box;
+            channels = new int[b.getNumComponents()];
+            for (int i=0;i<channels.length;i++) {
+                channels[i] = i;
+            }
+        } else if (box instanceof PaletteBox) {
             PaletteBox b = (PaletteBox) box;
             int indexsize = b.getNumEntries();
             int numc = b.getNumComp();
@@ -112,18 +125,6 @@ public class ImageInputStream extends InputStream implements FileFormatReaderLis
                     cs = new ICC_ColorSpace(b.getICCProfile());
                     break;
                 default:
-                    // PDF/A3: "The value of the METH entry in its 'colr' box shall be
-                    // 0x01, 0x02 or 0x03."
-            }
-            if (b.getApproximationAccuracy() == 1) {
-                // PDF/A3: "If the number of colour space specifications in the JPEG2000 data
-                // is greater than 1, there shall be exactly one colour space specification
-                // that has the value 0x01 in the APPROX field."
-                if (seenapprox) {
-                    baseline = false;
-                } else {
-                    seenapprox = true;
-                }
             }
         } else if (box instanceof ChannelDefinitionBox) {
             ChannelDefinitionBox b = (ChannelDefinitionBox)box;
@@ -287,38 +288,71 @@ public class ImageInputStream extends InputStream implements FileFormatReaderLis
     //--------------------------------------------------------------
     // ImageInputStream methods
 
+    /**
+     * Return the overwall width of the image, in pixels
+     */
     public int getWidth() {
         return iw;
     }
 
+    /**
+     * Return the overall height of the image, in pixels
+     */
     public int getHeight() {
         return ih;
     }
 
+    /**
+     * Return the number of components in the image data,
+     * which will be 1 for indexed images, otherwise the number
+     * of components in the image ColorSpace, plus one if the
+     * image has an alpha channel
+     */
     public int getNumComponents() {
         return numc;
     }
 
+    /**
+     * Return the number of bytes in each scanline of the image
+     */
     public int getRowSpan() {
         return getNumComponents() * getWidth();
     }
 
+    /**
+     * Return the number of bits for each component - currently this is always 8.
+     */
     public int getBitsPerComponent() {
         return 8;
     }
 
+    /**
+     * Return the ColorSpace for the image, which may be null if this
+     * implementation has no support for the encoded space (eg. Lab or CMYK)
+     */
     public ColorSpace getColorSpace() {
         return cs;
     }
 
+    /**
+     * Return true if the image is indexed with a palette
+     */
     public boolean isIndexed() {
         return palette != null;
     }
 
+    /**
+     * Return the number of entries in the index
+     */
     public int getIndexSize() {
         return palette != null ? palette.length : -1;
     }
 
+    /**
+     * Return the specified component from the image palette
+     * @param color the color, from 0..getIndexSize()
+     * @param component the component, from 0..getColorSpace().getNumComponents();
+     */
     public int getIndexComponent(int color, int component) {
         return palette[color][component];
     }
@@ -327,6 +361,13 @@ public class ImageInputStream extends InputStream implements FileFormatReaderLis
         return "{JPX: w="+getWidth()+" h="+getHeight()+" numc="+getNumComponents()+" bpc="+getBitsPerComponent()+(isIndexed()?" ix"+getIndexSize():"")+" rs="+getRowSpan()+" hash=0x"+Integer.toHexString(System.identityHashCode(this))+"}";
     }
 
+    /** 
+     * Convert the enumerated colorspace valuel to a {@link ColorSpace}.
+     * This method could be overriden by subclasses to increase the number
+     * of supported ColorSpaces.
+     * @param e the enumerated colorspace value, eg 16 for sRGB.
+     * @return the ColorSpace, or null if it is unsupported.
+     */
     protected  ColorSpace createColorSpace(int e) {
         switch(e) {
             case 16: return ColorSpace.getInstance(ColorSpace.CS_sRGB);
