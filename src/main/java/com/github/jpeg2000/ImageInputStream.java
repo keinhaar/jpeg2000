@@ -136,7 +136,8 @@ public class ImageInputStream extends InputStream implements FileFormatReaderLis
     }
 
     /**
-     * Parse the specified Box from the JP2H header
+     * Parse the specified Box from the JP2H header.
+     * Subclasses needing access to the contents of these boxes can override this method.
      * @param box the Box
      */
     @Override public void addNode(Box box) {
@@ -193,6 +194,7 @@ public class ImageInputStream extends InputStream implements FileFormatReaderLis
     // InputStream methods
 
     private boolean nextRow(boolean skip) throws IOException {
+        rowCallback();
 //        System.out.println("IN: ty="+ty+"/"+numty+" numtx="+numtx+" numc="+numc+" skip="+skip+" pos="+pos+" length="+length);
         if (ty == numty) {
             return false;
@@ -404,6 +406,13 @@ public class ImageInputStream extends InputStream implements FileFormatReaderLis
     }
 
     /**
+     * Return the original bit depth for the specified component from the source image.
+     */
+    public int getOriginalBitsPerComponent(int comp) {
+        return depth[comp];
+    }
+
+    /**
      * Return the ColorSpace for the image, which may be null if this
      * implementation has no support for the encoded space (eg. Lab or CMYK)
      */
@@ -460,6 +469,12 @@ public class ImageInputStream extends InputStream implements FileFormatReaderLis
      */
     protected boolean isInterrupted() {
         return Thread.currentThread().isInterrupted();
+    }
+
+    /**
+     * Called when a row of tiles is loaded. For benchmarking, the default is a no-op
+     */
+    protected void rowCallback() throws IOException {
     }
 
 
