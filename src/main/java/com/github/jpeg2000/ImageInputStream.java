@@ -42,7 +42,7 @@ public class ImageInputStream extends InputStream implements FileFormatReaderLis
     private DecoderSpecs decSpec;
     private InverseWT invWT;
     private BitstreamReaderAgent breader;
-    private int fulliw, fullih, numtx, numty, iw, ih, scanline, numc, fullscale, scale;
+    private int fulliw, fullih, numtx, numty, iw, ih, scanline, numc, fullscale, scale, ntw, nth;
     private final int[] depth;
     private int[] channels;
 
@@ -215,11 +215,13 @@ public class ImageInputStream extends InputStream implements FileFormatReaderLis
                     // First pass
                     buf = new byte[scanline * th];
                     db = new DataBlkInt(0, 0, tw, th);
+                    ntw = tw;
+                    nth = th;
                 }
                 db.w = tw;
                 db.h = th;
                 length = scanline * th;
-                final int itx = tx * tw;
+                final int itx = tx * ntw;
                 final int ity = 0;
                 for (int iz=0;iz<numc;iz++) {
                     int riz = channels[iz];     // output channel, could differ from input channel
@@ -228,7 +230,7 @@ public class ImageInputStream extends InputStream implements FileFormatReaderLis
                     final int csx = src.getCompSubsX(iz);
                     final int csy = src.getCompSubsY(iz);
                     final int fb = src.getFixedPoint(iz);
-//                    System.out.println("iwh="+iw+"x"+ih+" txy="+tx+"x"+ty+" of "+numtx+","+numty+" tcwh="+tw+"x"+th+" twh="+src.getTileWidth()+"x"+src.getTileHeight()+" ntwh="+src.getNomTileWidth()+"x"+src.getNomTileHeight()+" iz="+iz+"="+riz+" ss="+csx+"x"+csy+" d="+depth+" mid="+mid+" fb="+fb+" sl="+scanline+" buf="+buf.length);
+//                    System.out.println("iwh="+iw+"x"+ih+" txy="+tx+"x"+ty+" of "+numtx+","+numty+" itxy="+src.getTilePartULX()+"x"+src.getTilePartULY()+" tcwh="+tw+"x"+th+" twh="+src.getTileWidth()+"x"+src.getTileHeight()+" ntwh="+src.getNomTileWidth()+"x"+src.getNomTileHeight()+" iz="+iz+"="+riz+" ss="+csx+"x"+csy+" d="+depth+" mid="+mid+" fb="+fb+" sl="+scanline+" buf="+buf.length);
                     int[] shift = null;
                     if (depth < 8) {
                         shift = new int[1<<depth];
