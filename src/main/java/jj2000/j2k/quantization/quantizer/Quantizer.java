@@ -49,7 +49,7 @@ import jj2000.j2k.wavelet.Subband;
 import jj2000.j2k.wavelet.analysis.CBlkWTDataSrc;
 import jj2000.j2k.wavelet.analysis.SubbandAn;
 
-import com.github.jpeg2000.J2KImageWriteParamJava;
+import com.github.jpeg2000.J2KWriteParam;
 
 /**
  * This abstract class provides the general interface for quantizers. The
@@ -258,7 +258,7 @@ public abstract class Quantizer extends ImgDataAdapter
      * the options in 'pl'
      * */
     public static Quantizer createInstance(CBlkWTDataSrc src,
-                                           J2KImageWriteParamJava wp) {
+                                           J2KWriteParam wp) {
 	// Instantiate quantizer
 	return new StdQuantizer(src,wp);
     }

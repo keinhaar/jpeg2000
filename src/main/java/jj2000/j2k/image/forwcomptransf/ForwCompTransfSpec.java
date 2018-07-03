@@ -50,7 +50,7 @@ import jj2000.j2k.wavelet.FilterTypes;
 import jj2000.j2k.wavelet.analysis.AnWTFilter;
 import jj2000.j2k.wavelet.analysis.AnWTFilterSpec;
 
-import com.github.jpeg2000.J2KImageWriteParamJava;
+import com.github.jpeg2000.J2KWriteParam;
 /**
  * This class extends CompTransfSpec class in order to hold encoder specific
  * aspects of CompTransfSpec.
@@ -82,7 +82,7 @@ public class ForwCompTransfSpec extends CompTransfSpec implements FilterTypes {
      * @param wfs The wavelet filter specifications
      * */
     public ForwCompTransfSpec(int nt, int nc, byte type, AnWTFilterSpec wfs,
-                              J2KImageWriteParamJava wp, String values){
+                              J2KWriteParam wp, String values){
         super(nt,nc,type);
 
         String param = values;

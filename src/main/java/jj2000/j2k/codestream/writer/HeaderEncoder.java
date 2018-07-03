@@ -68,7 +68,7 @@ import jj2000.j2k.wavelet.analysis.AnWTFilter;
 import jj2000.j2k.wavelet.analysis.ForwardWT;
 import jj2000.j2k.wavelet.analysis.SubbandAn;
 
-import com.github.jpeg2000.J2KImageWriteParamJava;
+import com.github.jpeg2000.J2KWriteParam;
 /**
  * This class writes almost of the markers and marker segments in main header
  * and in tile-part headers. It is created by the run() method of the Encoder
@@ -146,7 +146,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions {
     protected ROIScaler roiSc;
 
     /** The encoder specifications */
-    protected J2KImageWriteParamJava wp;
+    protected J2KWriteParam wp;
 
     /**
      * Initializes the header writer with the references to the coding chain.
@@ -168,7 +168,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions {
      * @param ralloc The post compression rate allocator.
      * */
     public HeaderEncoder(ImgData origsrc, boolean isorigsig[],
-                         ForwardWT dwt, Tiler tiler,J2KImageWriteParamJava wp,
+                         ForwardWT dwt, Tiler tiler,J2KWriteParam wp,
 			 ROIScaler roiSc, PostCompRateAllocator ralloc) {
         if (origsrc.getNumComps() != isorigsig.length) {
             throw new IllegalArgumentException();

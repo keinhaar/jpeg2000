@@ -76,7 +76,7 @@ import jj2000.j2k.wavelet.synthesis.SynWTFilter;
 import jj2000.j2k.wavelet.synthesis.SynWTFilterFloatLift9x7;
 import jj2000.j2k.wavelet.synthesis.SynWTFilterIntLift5x3;
 
-import com.github.jpeg2000.J2KImageReadParamJava;
+import com.github.jpeg2000.J2KReadParam;
 
 /**
  * This class reads Main and Tile-part headers from the codestream. It is
@@ -136,8 +136,8 @@ public class HeaderDecoder implements ProgressionType, Markers,
     /** Current header information in a string */
     private String hdStr = "";
 
-    /** The J2KImageReadParamJava instance of the decoder */
-    private J2KImageReadParamJava j2krparam;
+    /** The J2KReadParam instance of the decoder */
+    private J2KReadParam j2krparam;
 
     /** The number of tiles within the image */
     private int nTiles;
@@ -2354,7 +2354,7 @@ public class HeaderDecoder implements ProgressionType, Markers,
      * codestream main header.
      * */
     public HeaderDecoder(RandomAccessIO ehs, 
-			 J2KImageReadParamJava j2krparam,
+			 J2KReadParam j2krparam,
 			 HeaderInfo hi)
         throws IOException {
 
@@ -2394,7 +2394,7 @@ public class HeaderDecoder implements ProgressionType, Markers,
      * @return The entropy decoder
      * */
     public EntropyDecoder createEntropyDecoder(CodedCBlkDataSrcDec src,
-                                               J2KImageReadParamJava j2krparam) {
+                                               J2KReadParam j2krparam) {
         // Get error detection option
         // boolean doer = j2krparam.getCer();;
         boolean doer = true;
@@ -2502,7 +2502,7 @@ public class HeaderDecoder implements ProgressionType, Markers,
      * @return The ROI descaler
      * */
     public ROIDeScaler createROIDeScaler(CBlkQuantDataSrcDec src,
-                                         J2KImageReadParamJava j2krparam,
+                                         J2KReadParam j2krparam,
 					 DecoderSpecs decSpec2){
         return ROIDeScaler.createInstance(src, j2krparam, decSpec2);
     }

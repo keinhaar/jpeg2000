@@ -59,7 +59,7 @@ import jj2000.j2k.wavelet.Subband;
 import jj2000.j2k.wavelet.analysis.CBlkWTData;
 import jj2000.j2k.wavelet.analysis.SubbandAn;
 
-import com.github.jpeg2000.J2KImageWriteParamJava;
+import com.github.jpeg2000.J2KWriteParam;
 /**
  * This class deals with the ROI functionality.
  *
@@ -163,7 +163,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc {
                      boolean roi,
                      int sLev,
                      boolean uba,
-		     J2KImageWriteParamJava wp){
+		     J2KWriteParam wp){
         super(src);
         this.src = src;
         this.roi = roi;
@@ -230,7 +230,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc {
      * scale.
      *
      * <P> The ROI Scaler creates a ROIMaskGenerator depending on what ROI
-     * information is in the J2KImageWriteParamJava. If only rectangular ROI are used,
+     * information is in the J2KWriteParam. If only rectangular ROI are used,
      * the fast mask generator for rectangular ROI can be used.
      *
      * @param src The source of data to scale
@@ -243,7 +243,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc {
      * the options in 'pl'
      * */
     public static ROIScaler createInstance(Quantizer src,
-					   J2KImageWriteParamJava wp){
+					   J2KWriteParam wp){
         Vector roiVector = new Vector();
         ROIMaskGenerator maskGen = null;
 
@@ -716,7 +716,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc {
      *
      * @param encSpec The encoder specifications for addition of roi specs
      * */
-    private void calcMaxMagBits(J2KImageWriteParamJava wp) {
+    private void calcMaxMagBits(J2KWriteParam wp) {
         int tmp;
 	MaxShiftSpec rois = wp.getROIs();
 

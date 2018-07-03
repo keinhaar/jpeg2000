@@ -56,7 +56,7 @@ import jj2000.j2k.util.MathUtil;
 import jj2000.j2k.wavelet.Subband;
 import jj2000.j2k.wavelet.synthesis.SubbandSyn;
 
-import com.github.jpeg2000.J2KImageReadParamJava;
+import com.github.jpeg2000.J2KReadParam;
 
 /**
  * This is the generic interface for bit stream reader agents. A bit stream
@@ -831,7 +831,7 @@ public abstract class BitstreamReaderAgent implements CodedCBlkDataSrcDec {
      * */
     public static BitstreamReaderAgent createInstance(RandomAccessIO in,
                                                       HeaderDecoder hd,
-                                                      J2KImageReadParamJava j2krparam,
+                                                      J2KReadParam j2krparam,
                                                       DecoderSpecs decSpec,
                                                       boolean cdstrInfo,
                                                       HeaderInfo hi)

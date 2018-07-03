@@ -94,7 +94,7 @@ import javax.imageio.ImageReadParam;
  * </tr>
  * </table>
  */
-public class J2KImageReadParamJava extends J2KImageReadParam {
+public class J2KImageReadParamJava extends J2KImageReadParam implements J2KReadParam {
 
     /** Ensures that no ROI de-scaling is performed.  Decompression
      *  is done like there is no ROI in the image.

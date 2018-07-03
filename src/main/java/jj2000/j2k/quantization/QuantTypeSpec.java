@@ -47,7 +47,7 @@ import java.util.StringTokenizer;
 
 import jj2000.j2k.ModuleSpec;
 
-import com.github.jpeg2000.J2KImageWriteParamJava;
+import com.github.jpeg2000.J2KWriteParam;
 
 /**
  * This class extends ModuleSpec class in order to hold specifications about
@@ -94,7 +94,7 @@ public class QuantTypeSpec extends ModuleSpec{
      * @param type the type of the specification module i.e. tile specific,
      * component specific or both.
      * */
-    public QuantTypeSpec(int nt, int nc, byte type, J2KImageWriteParamJava wp, String values){
+    public QuantTypeSpec(int nt, int nc, byte type, J2KWriteParam wp, String values){
         super(nt, nc, type);
 
 	if(values==null){

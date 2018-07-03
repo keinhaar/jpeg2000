@@ -184,7 +184,7 @@ public interface ImgData {
     /**
      * Returns the number of bits, referred to as the "range bits",
      * corresponding to the nominal range of the image data in the specified
-     * component. If this number is <i>n</b> then for unsigned data the
+     * component. If this number is <i>n</i> then for unsigned data the
      * nominal range is between 0 and 2^b-1, and for signed data it is between
      * -2^(b-1) and 2^(b-1)-1. In the case of transformed data which is not in
      * the image domain (e.g., wavelet coefficients), this method returns the

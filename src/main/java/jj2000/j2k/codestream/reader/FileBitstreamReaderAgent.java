@@ -71,7 +71,7 @@ import jj2000.j2k.util.MathUtil;
 import jj2000.j2k.util.MsgLogger;
 import jj2000.j2k.wavelet.synthesis.SubbandSyn;
 
-import com.github.jpeg2000.J2KImageReadParamJava;
+import com.github.jpeg2000.J2KReadParam;
 
 /**
  * This class reads the bit stream (with the help of HeaderDecoder for tile
@@ -99,8 +99,8 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent
     /** Reference to the PktDecoder instance */
     public PktDecoder pktDec;
 
-    /** Reference to the J2KImageReadParamJava instance */
-    private J2KImageReadParamJava j2krparam;
+    /** Reference to the J2KReadParam instance */
+    private J2KReadParam j2krparam;
 
     /** The RandomAccessIO where to get data from */
     private RandomAccessIO in;
@@ -237,7 +237,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent
      * */
     public FileBitstreamReaderAgent(HeaderDecoder hd,RandomAccessIO ehs,
                                     DecoderSpecs decSpec,
-                                    J2KImageReadParamJava j2krparam,
+                                    J2KReadParam j2krparam,
                                     boolean cdstrInfo,HeaderInfo hi)
         throws IOException {
         super(hd,decSpec);

@@ -53,7 +53,7 @@ import jj2000.j2k.codestream.writer.CodestreamWriter;
 import jj2000.j2k.codestream.writer.HeaderEncoder;
 import jj2000.j2k.image.ImgDataAdapter;
 
-import com.github.jpeg2000.J2KImageWriteParamJava;
+import com.github.jpeg2000.J2KWriteParam;
 /**
  * This is the abstract class from which post-compression rate allocators
  * which generate layers should inherit. The source of data is a
@@ -129,7 +129,7 @@ public abstract class PostCompRateAllocator extends ImgDataAdapter {
     protected CodedCBlkDataSrcEnc src;
 
     /** The source of entropy coded data */
-    protected J2KImageWriteParamJava wp;
+    protected J2KWriteParam wp;
 
     /** The number of layers. */
     protected int numLayers;
@@ -154,7 +154,7 @@ public abstract class PostCompRateAllocator extends ImgDataAdapter {
      * @see ProgressionType
      * */
     public PostCompRateAllocator(CodedCBlkDataSrcEnc src, int nl,
-                                 CodestreamWriter bw, J2KImageWriteParamJava wp) {
+                                 CodestreamWriter bw, J2KWriteParam wp) {
         super(src);
         this.src = src;
         this.wp = wp;
@@ -236,7 +236,7 @@ public abstract class PostCompRateAllocator extends ImgDataAdapter {
     public static PostCompRateAllocator createInstance(CodedCBlkDataSrcEnc src,
                                                        float rate,
                                                        CodestreamWriter bw,
-                                                       J2KImageWriteParamJava wp){
+                                                       J2KWriteParam wp){
         String lyropt = wp.getLayers();
         if (lyropt == null) {
             if(wp.getROIs().getSpecified() == null) {

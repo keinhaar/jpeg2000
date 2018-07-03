@@ -56,7 +56,7 @@ import jj2000.j2k.wavelet.analysis.CBlkWTDataInt;
 import jj2000.j2k.wavelet.analysis.CBlkWTDataSrc;
 import jj2000.j2k.wavelet.analysis.SubbandAn;
 
-import com.github.jpeg2000.J2KImageWriteParamJava;
+import com.github.jpeg2000.J2KWriteParam;
 
 /**
  * This class implements scalar quantization of integer or floating-point
@@ -140,7 +140,7 @@ public class StdQuantizer extends Quantizer {
      *
      * @param encSpec The encoder specifications
      * */
-    public StdQuantizer(CBlkWTDataSrc src,J2KImageWriteParamJava wp){
+    public StdQuantizer(CBlkWTDataSrc src,J2KWriteParam wp){
 	super(src);
 	qts  = wp.getQuantizationType();
         qsss = wp.getQuantizationStep();

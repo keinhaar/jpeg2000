@@ -53,7 +53,7 @@ import jj2000.j2k.quantization.quantizer.Quantizer;
 import jj2000.j2k.wavelet.Subband;
 import jj2000.j2k.wavelet.analysis.SubbandAn;
 
-import com.github.jpeg2000.J2KImageWriteParamJava;
+import com.github.jpeg2000.J2KWriteParam;
 /**
  * This abstract class provides the general interface for block-based entropy
  * encoders. The input to the entropy coder is the quantized wavelet
@@ -308,7 +308,7 @@ public abstract class EntropyCoder extends ImgDataAdapter
      * the options in 'pl'
      * */
     public static EntropyCoder createInstance(CBlkQuantDataSrcEnc src,
-                                              J2KImageWriteParamJava wp,
+                                              J2KWriteParam wp,
                                               CBlkSizeSpec cblks,
                                               PrecinctSizeSpec pss,
                                               StringSpec bms,StringSpec mqrs,

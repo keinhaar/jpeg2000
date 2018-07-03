@@ -49,7 +49,7 @@ import java.util.StringTokenizer;
 import jj2000.j2k.ModuleSpec;
 import jj2000.j2k.util.MathUtil;
 
-import com.github.jpeg2000.J2KImageWriteParamJava;
+import com.github.jpeg2000.J2KWriteParam;
 /**
  * This class extends ModuleSpec class for code-blocks sizes holding purposes.
  *
@@ -98,7 +98,7 @@ public class CBlkSizeSpec extends ModuleSpec {
      *
      * @param pl The ParameterList instance
      * */
-    public CBlkSizeSpec(int nt, int nc, byte type, J2KImageWriteParamJava wp, String values) {
+    public CBlkSizeSpec(int nt, int nc, byte type, J2KWriteParam wp, String values) {
         super(nt, nc, type);
 
         boolean firstVal = true;

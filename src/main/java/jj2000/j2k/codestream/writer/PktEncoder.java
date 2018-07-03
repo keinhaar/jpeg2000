@@ -55,7 +55,7 @@ import jj2000.j2k.util.ArrayUtil;
 import jj2000.j2k.util.MathUtil;
 import jj2000.j2k.wavelet.analysis.SubbandAn;
 
-import com.github.jpeg2000.J2KImageWriteParamJava;
+import com.github.jpeg2000.J2KWriteParam;
 /**
  * This class builds packets and keeps the state information of packet
  * interdependencies. It also supports saving the state and reverting
@@ -89,7 +89,7 @@ public class PktEncoder {
     private CodedCBlkDataSrcEnc infoSrc;
 
     /** The encoder specs */
-    J2KImageWriteParamJava wp;
+    J2KWriteParam wp;
 
     /**
      * The tag tree for inclusion information. The indexes are outlined
@@ -252,7 +252,7 @@ public class PktEncoder {
      *
      * @param pl ParameterList instance that holds command line options
      * */
-    public PktEncoder(CodedCBlkDataSrcEnc infoSrc, J2KImageWriteParamJava wp,
+    public PktEncoder(CodedCBlkDataSrcEnc infoSrc, J2KWriteParam wp,
                       Point[][][] numPrec) {
         this.infoSrc = infoSrc;
         this.wp = wp;

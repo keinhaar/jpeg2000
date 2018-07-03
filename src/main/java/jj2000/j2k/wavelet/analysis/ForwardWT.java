@@ -51,7 +51,7 @@ import jj2000.j2k.image.BlkImgDataSrc;
 import jj2000.j2k.image.ImgData;
 import jj2000.j2k.image.ImgDataAdapter;
 
-import com.github.jpeg2000.J2KImageWriteParamJava;
+import com.github.jpeg2000.J2KWriteParam;
 /**
  * This abstract class represents the forward wavelet transform functional
  * block. The functional block may actually be comprised of several classes
@@ -133,7 +133,7 @@ public abstract class ForwardWT extends ImgDataAdapter
      * or if invalid values are given.
      * */
     public static ForwardWT createInstance(BlkImgDataSrc src,
-                                           J2KImageWriteParamJava wp){
+                                           J2KWriteParam wp){
         int defdec,deflev;
         String decompstr;
         String wtstr;

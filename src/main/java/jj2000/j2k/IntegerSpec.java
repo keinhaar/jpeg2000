@@ -48,7 +48,7 @@ package jj2000.j2k;
 
 import java.util.StringTokenizer;
 
-import com.github.jpeg2000.J2KImageWriteParamJava;
+import com.github.jpeg2000.J2KWriteParam;
 
 /**
  * This class extends ModuleSpec and is responsible of Integer
@@ -94,7 +94,7 @@ public class IntegerSpec extends ModuleSpec{
      * @param optName The name of the option to process
      *
      * */
-    public IntegerSpec(int nt, int nc, byte type, J2KImageWriteParamJava wp, String values,
+    public IntegerSpec(int nt, int nc, byte type, J2KWriteParam wp, String values,
                          String defaultValue) {
         super(nt,nc,type);
 

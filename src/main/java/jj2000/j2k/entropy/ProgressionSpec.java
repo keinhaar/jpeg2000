@@ -49,7 +49,7 @@ import jj2000.j2k.IntegerSpec;
 import jj2000.j2k.ModuleSpec;
 import jj2000.j2k.codestream.ProgressionType;
 
-import com.github.jpeg2000.J2KImageWriteParamJava;
+import com.github.jpeg2000.J2KWriteParam;
 
 /**
  * This class extends ModuleSpec class for progression type(s) and progression
@@ -82,7 +82,7 @@ public class ProgressionSpec extends ModuleSpec {
 
     /**
      * Creates a new ProgressionSpec object for the specified number of
-     * tiles, components and the J2KImageWriteParamJava instance.
+     * tiles, components and the J2KWriteParam instance.
      *
      * @param nt The number of tiles
      *
@@ -95,10 +95,10 @@ public class ProgressionSpec extends ModuleSpec {
      * @param type the type of the specification module. The ProgressionSpec
      * class should only be used only with the type ModuleSpec.SPEC_TYPE_TILE.
      *
-     * @param wp The J2KImageWriteParamJava instance
+     * @param wp The J2KWriteParam instance
      * */
     public ProgressionSpec(int nt,int nc,int nl,IntegerSpec dls,byte type,
-			   J2KImageWriteParamJava wp, String values){
+			   J2KWriteParam wp, String values){
         super(nt,nc,type);
 
         specified = values;

@@ -45,7 +45,8 @@ package jj2000.j2k;
 
 import java.util.StringTokenizer;
 
-import com.github.jpeg2000.J2KImageWriteParamJava;
+import com.github.jpeg2000.J2KWriteParam;
+
 /**
  * This class extends ModuleSpec class in order to hold tile-component
  * specifications using Strings.
@@ -95,7 +96,7 @@ public class StringSpec extends ModuleSpec{
      *
      * */
     public StringSpec(int nt, int nc, byte type, String defaultValue,
-                       String[] list, J2KImageWriteParamJava wp, String values){
+                       String[] list, J2KWriteParam wp, String values){
         super(nt,nc,type);
         specified = values;
 

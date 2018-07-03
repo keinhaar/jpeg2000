@@ -53,7 +53,7 @@ import jj2000.j2k.codestream.Markers;
 import jj2000.j2k.image.BlkImgDataSrc;
 import jj2000.j2k.util.MathUtil;
 
-import com.github.jpeg2000.J2KImageWriteParamJava;
+import com.github.jpeg2000.J2KWriteParam;
 
 /**
  * This class extends ModuleSpec class for precinct partition sizes holding
@@ -94,7 +94,7 @@ public class PrecinctSizeSpec extends ModuleSpec {
 
     /**
      * Creates a new PrecinctSizeSpec object for the specified number of tiles
-     * and components and the J2KImageWriteParamJava instance.
+     * and components and the J2KWriteParam instance.
      *
      * @param nt The number of tiles
      *
@@ -105,10 +105,10 @@ public class PrecinctSizeSpec extends ModuleSpec {
      *
      * @param imgsrc The image source (used to get the image size)
      *
-     * @param wp The J2KImageWriteParamJava instance
+     * @param wp The J2KWriteParam instance
      * */
     public PrecinctSizeSpec(int nt, int nc, byte type, BlkImgDataSrc imgsrc,
-                          IntegerSpec dls, J2KImageWriteParamJava wp, String values) {
+                          IntegerSpec dls, J2KWriteParam wp, String values) {
         super(nt, nc, type);
 
         this.dls = dls;

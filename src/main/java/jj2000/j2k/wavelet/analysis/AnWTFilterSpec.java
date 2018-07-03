@@ -48,7 +48,7 @@ import java.util.StringTokenizer;
 import jj2000.j2k.ModuleSpec;
 import jj2000.j2k.quantization.QuantTypeSpec;
 
-import com.github.jpeg2000.J2KImageWriteParamJava;
+import com.github.jpeg2000.J2KWriteParam;
 
 /**
  * This class extends ModuleSpec class for analysis filters specification
@@ -78,7 +78,7 @@ public class AnWTFilterSpec extends ModuleSpec {
      * @param qts Quantization specifications
      * */
     public AnWTFilterSpec(int nt, int nc, byte type,
-                          QuantTypeSpec qts, J2KImageWriteParamJava wp, String values){
+                          QuantTypeSpec qts, J2KWriteParam wp, String values){
         super(nt, nc, type);
 /*
         // Check parameters

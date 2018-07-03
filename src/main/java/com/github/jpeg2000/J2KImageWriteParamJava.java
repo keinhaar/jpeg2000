@@ -383,7 +383,7 @@ import jj2000.j2k.wavelet.analysis.AnWTFilterSpec;
  * </tr>
  * </table>
  */
-public class J2KImageWriteParamJava extends ImageWriteParam {
+public class J2KImageWriteParamJava extends ImageWriteParam implements J2KWriteParam {
     /**
      * Indicates that the packet headers are packed in the tiles' headers.
      */

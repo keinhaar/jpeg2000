@@ -53,7 +53,7 @@ import jj2000.j2k.image.ImgDataAdapter;
 import jj2000.j2k.util.MathUtil;
 import jj2000.j2k.wavelet.analysis.AnWTFilterSpec;
 
-import com.github.jpeg2000.J2KImageWriteParamJava;
+import com.github.jpeg2000.J2KWriteParam;
 /**
  * This class apply component transformations to the tiles depending
  * on user specifications. These transformations can be used to
@@ -119,7 +119,7 @@ public class ForwCompTransf extends ImgDataAdapter
      *
      * @see BlkImgDataSrc
      * */
-    public ForwCompTransf(BlkImgDataSrc imgSrc, J2KImageWriteParamJava wp) {
+    public ForwCompTransf(BlkImgDataSrc imgSrc, J2KWriteParam wp) {
         super(imgSrc);
 	this.cts = wp.getComponentTransformation();
         this.wfs = wp.getFilters();

@@ -50,7 +50,7 @@ import jj2000.j2k.quantization.dequantizer.CBlkQuantDataSrcDec;
 import jj2000.j2k.wavelet.synthesis.MultiResImgDataAdapter;
 import jj2000.j2k.wavelet.synthesis.SubbandSyn;
 
-import com.github.jpeg2000.J2KImageReadParamJava;
+import com.github.jpeg2000.J2KReadParam;
 
 /**
  * This class takes care of the de-scaling of ROI coefficients. The de-scaler
@@ -311,7 +311,7 @@ public class ROIDeScaler extends MultiResImgDataAdapter
      * the options in 'pl'
      * */
     public static ROIDeScaler createInstance(CBlkQuantDataSrcDec src,
-                                             J2KImageReadParamJava j2krparam,
+                                             J2KReadParam j2krparam,
                                              DecoderSpecs decSpec){
         // Check if no_roi specified in command line or no roi signalled
 	// in bit stream
