@@ -29,7 +29,7 @@
       <fileset dir="target/classes/test" />
       <zipfileset src="target/jj2000.jar"/>
       <manifest>
-        <attribute name="Main-Class" value="Test"/>
+        <attribute name="Main-Class" value="TestReader"/>
       </manifest>
     </jar>
   </target>

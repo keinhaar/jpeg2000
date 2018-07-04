@@ -232,7 +232,7 @@ public abstract class BufferedRandomAccessFile
 	    flush();
 	}
         // Don't allow to seek beyond end of file if reading only
-        if (isReadOnly && off >= theFile.length()) {
+        if (isReadOnly && off > theFile.length()) {
             throw new EOFException();
         }
         // Set new offset

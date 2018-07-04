@@ -9,7 +9,6 @@ import java.awt.color.*;
 import jj2000.j2k.decoder.DecoderSpecs;
 import jj2000.j2k.quantization.dequantizer.Dequantizer;
 import jj2000.j2k.image.invcomptransf.InvCompTransf;
-import jj2000.j2k.fileformat.reader.FileFormatReader;
 import jj2000.j2k.codestream.reader.BitstreamReaderAgent;
 import jj2000.j2k.codestream.reader.HeaderDecoder;
 import jj2000.j2k.wavelet.synthesis.InverseWT;
@@ -35,7 +34,7 @@ import jj2000.j2k.io.EndianType;
  * 
  * @author http://bfo.com
  */
-public class ImageInputStream extends InputStream implements FileFormatReaderListener, MsgLogger {
+public class ImageInputStream extends InputStream implements MsgLogger {
     private RandomAccessIO in;
     private Thread registerThread;
     private BlkImgDataSrc src;          // image data source
@@ -64,18 +63,28 @@ public class ImageInputStream extends InputStream implements FileFormatReaderLis
         FacilityManager.registerMsgLogger(registerThread, this);
         J2KImageReadParamJava j2kreadparam = new J2KImageReadParamJava();
         j2kreadparam.setParsingEnabled(true);
-        FileFormatReader ff = new FileFormatReader(in, this);
-        ff.readFileFormat();
-        in.seek(ff.getFirstCodeStreamPos());
+        J2KFile file = new J2KFile();
+        file.read(in);
+        for (Box box : file.getHeaderBox().getBoxes()) {
+            addBox(box);
+        }
+        try {
+            file.write(javax.xml.stream.XMLOutputFactory.newFactory().createXMLStreamWriter(System.out)).close();
+        } catch (javax.xml.stream.XMLStreamException e) {
+            throw new IOException(e);
+        }
+
+        RandomAccessIO codein = file.getCodeStreamBox().getRandomAccessIO();
+        System.out.println(in.getPos());
 
         HeaderInfo hi = new HeaderInfo();
-        HeaderDecoder hd = new HeaderDecoder(in, j2kreadparam, hi);
+        HeaderDecoder hd = new HeaderDecoder(codein, j2kreadparam, hi);
         depth = new int[hd.getNumComps()];
         for (int i=0;i<depth.length;i++) {
             depth[i] = hd.getOriginalBitDepth(i);
         }
         decSpec = hd.getDecoderSpecs();
-        breader = BitstreamReaderAgent.createInstance(in, hd, j2kreadparam, decSpec, false, hi);
+        breader = BitstreamReaderAgent.createInstance(codein, hd, j2kreadparam, decSpec, false, hi);
         if (isInterrupted()) {
             throw new InterruptedIOException();
         }
@@ -135,14 +144,9 @@ public class ImageInputStream extends InputStream implements FileFormatReaderLis
         }
     }
 
-    /**
-     * Parse the specified Box from the JP2H header.
-     * Subclasses needing access to the contents of these boxes can override this method.
-     * @param box the Box
-     */
-    @Override public void addNode(Box box) {
-        if (box instanceof HeaderBox) {
-            HeaderBox b = (HeaderBox) box;
+    protected void addBox(Box box) {
+        if (box instanceof ImageHeaderBox) {
+            ImageHeaderBox b = (ImageHeaderBox) box;
             channels = new int[b.getNumComponents()];
             for (int i=0;i<channels.length;i++) {
                 channels[i] = i;

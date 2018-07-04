@@ -3,7 +3,7 @@ import com.github.jpeg2000.*;
 import java.io.*;
 import java.awt.color.ColorSpace;
 
-public class Test {
+public class TestReader {
     public static void main(String[] args) throws IOException {
         if (args.length == 0) {
             System.err.println("Usage: java -jar test.jar file.jpx [file.jpx...]");

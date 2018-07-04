@@ -1,54 +1,8 @@
-/*
- * $RCSfile: FileTypeBox.java,v $
- *
- * 
- * Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met: 
- * 
- * - Redistribution of source code must retain the above copyright 
- *   notice, this  list of conditions and the following disclaimer.
- * 
- * - Redistribution in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in 
- *   the documentation and/or other materials provided with the
- *   distribution.
- * 
- * Neither the name of Sun Microsystems, Inc. or the names of 
- * contributors may be used to endorse or promote products derived 
- * from this software without specific prior written permission.
- * 
- * This software is provided "AS IS," without a warranty of any 
- * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND 
- * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, 
- * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY
- * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL 
- * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF 
- * USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS
- * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR 
- * ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL,
- * CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND
- * REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR
- * INABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGES. 
- * 
- * You acknowledge that this software is not designed or intended for 
- * use in the design, construction, operation or maintenance of any 
- * nuclear facility. 
- *
- * $Revision: 1.1 $
- * $Date: 2005/02/11 05:01:32 $
- * $State: Exp $
- */
 package com.github.jpeg2000;
 
-import javax.imageio.metadata.IIOInvalidTreeException;
-import javax.imageio.metadata.IIOMetadataNode;
-
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import java.io.*;
+import jj2000.j2k.io.*;
+import javax.xml.stream.*;
 
 /** This class is defined to represent a File Type Box of JPEG JP2 file
  *  format.  A File Type Box has a length, and a fixed type of "ftyp".
@@ -58,61 +12,49 @@ import org.w3c.dom.NodeList;
  * which should be "jp2 " if brand is not "jp2 ".)
  */
 public class FileTypeBox extends Box {
-    /** Cache the element names for this box's xml definition */
-    private static String[] elementNames = {"Brand",
-                                            "MinorVersion",
-                                            "CompatibilityList"};
-
-    /** This method will be called by the getNativeNodeForSimpleBox of the
-     *  class Box to get the element names.
-     */
-    public static String[] getElementNames() {
-        return elementNames;
-    }
-
     /** The element values. */
     private int brand;
     private int minorVersion;
-    private int[] compatibility;
+    private int[] compat;
+
+    public FileTypeBox() {
+        super(fromString("ftyp"));
+        brand = 0x6a703220;
+        minorVersion = 0;
+        compat = new int[] { fromString("jp2 ") };
+    }
 
     /** Constructs a <code>FileTypeBox</code> from the provided brand, minor
      *  version and compatibility list.
      */
-    public FileTypeBox(int br, int minorVersion, int[] comp) {
-        super(16 + (comp == null ? 0 : (comp.length << 2)), 0x66747970, null);
+    public FileTypeBox(int br, int minorVersion, int[] compat) {
+        this();
         this.brand = br;
         this.minorVersion = minorVersion;
-        this.compatibility = comp;
+        this.compat = compat;
     }
 
-    /** Constructs a <code>FileTypeBox</code> from the provided byte array.
-     */
-    public FileTypeBox(byte[] data) {
-        super(8 + data.length, 0x66747970, data);
+    @Override public int getLength() {
+        return 8 + compat.length * 4;
     }
 
-    /** Constructs a <code>FileTypeBox</code> from
-     *  <code>org.w3c.dom.Node</code>.
-     */
-    public FileTypeBox(Node node) throws IIOInvalidTreeException {
-        super(node);
-        NodeList children = node.getChildNodes();
-
-        for (int i = 0; i < children.getLength(); i++) {
-            Node child = children.item(i);
-            String name = child.getNodeName();
-
-            if ("Brand".equals(name)) {
-                brand = Box.getIntElementValue(child);
+    @Override public void read(RandomAccessIO in) throws IOException {
+        brand = in.readInt();
+        minorVersion = in.readInt();
+        int len = (in.length() - in.getPos()) / 4;
+        if (len > 0) {
+            compat = new int[len];
+            for (int i=0;i<len;i++) {
+                compat[i] = in.readInt();
             }
+        }
+    }
 
-            if ("MinorVersion".equals(name)) {
-                minorVersion = Box.getIntElementValue(child);
-            }
-
-            if ("CompatibilityList".equals(name)) {
-                compatibility = Box.getIntArrayElementValue(child);
-            }
+    @Override public void write(DataOutputStream out) throws IOException {
+        out.writeInt(brand);
+        out.writeInt(minorVersion);
+        for (int i=0;i<compat.length;i++) {
+            out.writeInt(compat[i]);
         }
     }
 
@@ -126,50 +68,23 @@ public class FileTypeBox extends Box {
         return minorVersion;
     }
 
-    /** Returns the compatibilty list of this file type box. */
+    /** Returns the compatibility list of this file type box. */
     public int[] getCompatibilityList() {
-        return compatibility;
+        return compat;
     }
 
-    /** Creates an <code>IIOMetadataNode</code> from this file type box.
-     *  The format of this node is defined in the XML dtd and xsd
-     *  for the JP2 image file.
-     */
-    public IIOMetadataNode getNativeNode() {
-        return getNativeNodeForSimpleBox();
-    }
-
-    protected void parse(byte[] data) {
-        if (data == null)
-            return;
-        brand = ((data[0] & 0xFF) << 24) | ((data[1] & 0xFF) << 16) |
-                 ((data[2] & 0xFF) << 8) | (data[3] & 0xFF);
-
-        minorVersion = ((data[4] & 0xFF) << 24) | ((data[5] & 0xFF) << 16) |
-                 ((data[6] & 0xFF) << 8) | (data[7] & 0xFF);
-
-        int len = (data.length - 8) / 4;
-        if (len > 0) {
-            compatibility = new int[len];
-            for (int i = 0, j = 8; i < len; i++, j += 4)
-                compatibility[i] = ((data[j] & 0xFF) << 24) |
-                                   ((data[j+1] & 0xFF) << 16) |
-                                   ((data[j+2] & 0xFF) << 8) |
-                                   (data[j+3] & 0xFF);
+    @Override public void write(XMLStreamWriter out) throws XMLStreamException {
+        out.writeStartElement(toString(getType()).trim());
+        out.writeAttribute("length", Integer.toString(getLength()));
+        out.writeAttribute("brand", toString(brand));
+        out.writeAttribute("minorVersion", "0x" + Integer.toHexString(brand));
+        for (int i=0;i<compat.length;i++) {
+            out.writeStartElement("compat");
+            out.writeCharacters(toString(compat[i]));
+            out.writeEndElement();
         }
+        out.writeEndElement();
     }
 
-    protected void compose() {
-        if (data != null)
-            return;
-        data =
-            new byte[8 +
-                     (compatibility != null ? (compatibility.length << 2) : 0)];
 
-        copyInt(data, 0, brand);
-        copyInt(data, 4, minorVersion);
-        if (compatibility != null)
-            for (int i = 0, j = 8; i < compatibility.length; i++, j += 4)
-                copyInt(data, j, compatibility[i]);
-    }
 }
