@@ -140,7 +140,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions {
     protected ForwardWT dwt;
 
     /** Reference to the tiler module */
-    protected Tiler tiler;
+    protected ImgData tiler;
 
     /** Reference to the ROI module */
     protected ROIScaler roiSc;
@@ -168,7 +168,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions {
      * @param ralloc The post compression rate allocator.
      * */
     public HeaderEncoder(ImgData origsrc, boolean isorigsig[],
-                         ForwardWT dwt, Tiler tiler,J2KWriteParam wp,
+                         ForwardWT dwt, ImgData tiler,J2KWriteParam wp,
 			 ROIScaler roiSc, PostCompRateAllocator ralloc) {
         if (origsrc.getNumComps() != isorigsig.length) {
             throw new IllegalArgumentException();
@@ -304,7 +304,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions {
         // YTsiz (nominal tile height)
         hbuf.writeInt(tiler.getNomTileHeight());
 
-        Point torig = tiler.getTilingOrigin(null);
+        Point torig = tiler instanceof Tiler ? ((Tiler)tiler).getTilingOrigin(null) : new Point();
 	// XTOsiz (Horizontal offset from the origin of the reference
 	// grid to the left side of the first tile)
 	hbuf.writeInt(torig.x);
