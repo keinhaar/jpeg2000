@@ -4,6 +4,9 @@ import java.io.*;
 import jj2000.j2k.io.*;
 import javax.xml.stream.*;
 
+import jj2000.j2k.codestream.*;
+import jj2000.j2k.codestream.reader.*;
+
 /** This class is defined to represent a XML box of JPEG JP2
  *  file format.  This type of box has a length, a type of "xml ".  Its
  *  content is a text string of a XML instance.
@@ -58,7 +61,31 @@ public class CodeStreamBox extends Box {
     }
 
     @Override public void write(XMLStreamWriter out) throws XMLStreamException {
-        out.writeEmptyElement(toString(getType()).trim());
+        out.writeStartElement(toString(getType()).trim());
         out.writeAttribute("length", Integer.toString(getLength()));
+
+        J2KReadParam param = new SimpleJ2KReadParam();
+        HeaderInfo hi = new HeaderInfo();
+        try {
+            HeaderDecoder hd = new HeaderDecoder(getRandomAccessIO(), param, hi);
+
+            out.writeStartElement("SIZ");
+            out.writeAttribute("iw", Integer.toString(hi.siz.xsiz-hi.siz.x0siz));
+            out.writeAttribute("ih", Integer.toString(hi.siz.ysiz-hi.siz.y0siz));
+            out.writeAttribute("tw", Integer.toString(hi.siz.xtsiz));
+            out.writeAttribute("th", Integer.toString(hi.siz.ytsiz));
+            out.writeAttribute("numc", Integer.toString(hi.siz.csiz));
+            for (int i=0;i<hi.siz.csiz;i++) {
+                out.writeStartElement("component");
+                out.writeAttribute("depth", Integer.toString(hi.siz.getOrigBitDepth(i)));
+                out.writeAttribute("signed", Boolean.toString(hi.siz.isOrigSigned(i)));
+                out.writeAttribute("subx", Integer.toString(hi.siz.xrsiz[i]));
+                out.writeAttribute("suby", Integer.toString(hi.siz.yrsiz[i]));
+                out.writeEndElement();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        out.writeEndElement();
     }
 }

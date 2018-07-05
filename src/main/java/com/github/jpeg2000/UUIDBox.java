@@ -3,7 +3,9 @@ package com.github.jpeg2000;
 import java.io.*;
 import jj2000.j2k.io.*;
 import javax.xml.stream.*;
+import javax.xml.stream.events.*;
 import javax.xml.transform.*;
+import javax.xml.namespace.*;
 import javax.xml.transform.stream.*;
 import javax.xml.transform.stax.*;
 
@@ -74,8 +76,38 @@ public class UUIDBox extends Box {
                 TransformerFactory tf = TransformerFactory.newInstance();
                 Transformer t = tf.newTransformer();
                 t.transform(new StreamSource(new StringReader(s)), new StreamResult(new StringWriter()));
-                // Syntax is valid, redo output to actual outputstream
-                t.transform(new StreamSource(new StringReader(s)), new StAXResult(out));
+                // Syntax is valid, redo output to actual outputstream, removing startDoc/endDoc
+                final XMLEventWriter w = XMLOutputFactory.newInstance().createXMLEventWriter(new StAXResult(out));
+                t.transform(new StreamSource(new StringReader(s)), new StAXResult(new XMLEventWriter() {
+                    public void add(XMLEvent event) throws XMLStreamException {
+                        if (!event.isStartDocument() && !event.isEndDocument()) {
+                            w.add(event);
+                        }
+                    }
+                    public void add(XMLEventReader reader) throws XMLStreamException {
+                        w.add(reader);
+                    }
+                    public void	close() throws XMLStreamException {
+                    }
+                    public void	flush() throws XMLStreamException {
+                        w.flush();
+                    }
+                    public NamespaceContext getNamespaceContext() {
+                        return w.getNamespaceContext();
+                    }
+                    public  String getPrefix(String uri) throws XMLStreamException {
+                        return w.getPrefix(uri);
+                    }
+                    public void setDefaultNamespace(String uri) throws XMLStreamException {
+                        w.setDefaultNamespace(uri);
+                    }
+                    public void setNamespaceContext(NamespaceContext context) throws XMLStreamException {
+                        w.setNamespaceContext(context);
+                    }
+                    public void setPrefix(String prefix, String uri) throws XMLStreamException {
+                        w.setPrefix(prefix, uri);
+                    }
+                }));
                 raw = false;
             } catch (Exception e) {
                 throw new RuntimeException(e);
