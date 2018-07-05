@@ -57,8 +57,7 @@ import java.io.IOException;
  * @see BinaryDataInput
  * @see BinaryDataOutput
  * */
-public interface RandomAccessIO
-    extends BinaryDataInput, BinaryDataOutput {
+public interface RandomAccessIO {
 
     /**
      * Closes the I/O stream. Prior to closing the stream, any buffered data
@@ -147,4 +146,311 @@ public interface RandomAccessIO
      * @exception IOException If an I/O error ocurred.
      * */
     public void write(int b) throws IOException;
+
+    /**
+     * Should read a signed byte (i.e., 8 bit) from the input.
+     * reading, the input should be realigned at the byte level.
+     *
+     * @return The next byte-aligned signed byte (8 bit) from the
+     * input.
+     *
+     * @exception EOFException If the end-of file was reached before
+     * getting all the necessary data.
+     *
+     * @exception IOException If an I/O error ocurred.
+     *
+     *
+     * */
+    public byte readByte() throws EOFException, IOException;
+
+    /**
+     * Should read an unsigned byte (i.e., 8 bit) from the input. It is
+     * returned as an <tt>int</tt> since Java does not have an
+     * unsigned byte type. Prior to reading, the input should be
+     * realigned at the byte level.
+     *
+     * @return The next byte-aligned unsigned byte (8 bit) from the
+     * input, as an <tt>int</tt>.
+     *
+     * @exception EOFException If the end-of file was reached before
+     * getting all the necessary data.
+     *
+     * @exception IOException If an I/O error ocurred.
+     *
+     *
+     *
+     */
+    public int readUnsignedByte() throws EOFException, IOException;
+
+    /**
+     * Should read a signed short (i.e., 16 bit) from the input. Prior to
+     * reading, the input should be realigned at the byte level.
+     *
+     * @return The next byte-aligned signed short (16 bit) from the
+     * input.
+     *
+     * @exception EOFException If the end-of file was reached before
+     * getting all the necessary data.
+     *
+     * @exception IOException If an I/O error ocurred.
+     *
+     *
+     *
+     */
+    public short readShort() throws EOFException, IOException;
+
+    /**
+     * Should read an unsigned short (i.e., 16 bit) from the input. It is
+     * returned as an <tt>int</tt> since Java does not have an
+     * unsigned short type. Prior to reading, the input should be
+     * realigned at the byte level.
+     *
+     * @return The next byte-aligned unsigned short (16 bit) from the
+     * input, as an <tt>int</tt>.
+     *
+     * @exception EOFException If the end-of file was reached before
+     * getting all the necessary data.
+     *
+     * @exception IOException If an I/O error ocurred.
+     *
+     *
+     *
+     */
+    public int readUnsignedShort() throws EOFException, IOException;
+
+    /**
+     * Should read a signed int (i.e., 32 bit) from the input. Prior to
+     * reading, the input should be realigned at the byte level.
+     *
+     * @return The next byte-aligned signed int (32 bit) from the
+     * input.
+     *
+     * @exception EOFException If the end-of file was reached before
+     * getting all the necessary data.
+     *
+     * @exception IOException If an I/O error ocurred.
+     *
+     *
+     *
+     */
+    public int readInt() throws EOFException, IOException;
+
+    /**
+     * Should read an unsigned int (i.e., 32 bit) from the input. It is
+     * returned as a <tt>long</tt> since Java does not have an
+     * unsigned short type. Prior to reading, the input should be
+     * realigned at the byte level.
+     *
+     * @return The next byte-aligned unsigned int (32 bit) from the
+     * input, as a <tt>long</tt>.
+     *
+     * @exception EOFException If the end-of file was reached before
+     * getting all the necessary data.
+     *
+     * @exception IOException If an I/O error ocurred.
+     *
+     *
+     *
+     */
+    public long readUnsignedInt() throws EOFException, IOException;
+
+    /**
+     * Should read a signed long (i.e., 64 bit) from the input. Prior to
+     * reading, the input should be realigned at the byte level.
+     *
+     * @return The next byte-aligned signed long (64 bit) from the
+     * input.
+     *
+     * @exception EOFException If the end-of file was reached before
+     * getting all the necessary data.
+     *
+     * @exception IOException If an I/O error ocurred.
+     *
+     *
+     *
+     */
+    public long readLong() throws EOFException, IOException;
+
+    /**
+     * Should read an IEEE single precision (i.e., 32 bit)
+     * floating-point number from the input. Prior to reading, the
+     * input should be realigned at the byte level.
+     *
+     * @return The next byte-aligned IEEE float (32 bit) from the
+     * input.
+     *
+     * @exception EOFException If the end-of file was reached before
+     * getting all the necessary data.
+     *
+     * @exception IOException If an I/O error ocurred.
+     *
+     *
+     *
+     */
+    public float readFloat() throws EOFException, IOException;
+
+    /**
+     * Should read an IEEE double precision (i.e., 64 bit)
+     * floating-point number from the input. Prior to reading, the
+     * input should be realigned at the byte level.
+     *
+     * @return The next byte-aligned IEEE double (64 bit) from the
+     * input.
+     *
+     * @exception EOFException If the end-of file was reached before
+     * getting all the necessary data.
+     *
+     * @exception IOException If an I/O error ocurred.
+     *
+     *
+     *
+     */
+    public double readDouble() throws EOFException, IOException;
+
+    /**
+     * Returns the endianess (i.e., byte ordering) of the implementing
+     * class. Note that an implementing class may implement only one
+     * type of endianness or both, which would be decided at creatiuon
+     * time.
+     *
+     * @return Either <tt>EndianType.BIG_ENDIAN</tt> or
+     * <tt>EndianType.LITTLE_ENDIAN</tt>
+     *
+     * @see EndianType
+     *
+     *
+     *
+     */
+    public int getByteOrdering();
+
+    /**
+     * Skips <tt>n</tt> bytes from the input. Prior to skipping, the
+     * input should be realigned at the byte level.
+     *
+     * @param n The number of bytes to skip
+     *
+     * @exception EOFException If the end-of file was reached before
+     * all the bytes could be skipped.
+     *
+     * @exception IOException If an I/O error ocurred.
+     *
+     *
+     *
+     */
+    public int skipBytes(int n)throws EOFException, IOException;
+
+    /**
+     * Should write the byte value of <tt>v</tt> (i.e., 8 least
+     * significant bits) to the output. Prior to writing, the output
+     * should be realigned at the byte level.
+     *
+     * <P>Signed or unsigned data can be written. To write a signed
+     * value just pass the <tt>byte</tt> value as an argument. To
+     * write unsigned data pass the <tt>int</tt> value as an argument
+     * (it will be automatically casted, and only the 8 least
+     * significant bits will be written).
+     *
+     * @param v The value to write to the output
+     *
+     * @exception IOException If an I/O error ocurred.
+     *
+     *
+     *
+     */
+    public void writeByte(int v) throws IOException;
+
+    /**
+     * Should write the short value of <tt>v</tt> (i.e., 16 least
+     * significant bits) to the output. Prior to writing, the output
+     * should be realigned at the byte level.
+     *
+     * <P>Signed or unsigned data can be written. To write a signed
+     * value just pass the <tt>short</tt> value as an argument. To
+     * write unsigned data pass the <tt>int</tt> value as an argument
+     * (it will be automatically casted, and only the 16 least
+     * significant bits will be written).
+     *
+     * @param v The value to write to the output
+     *
+     * @exception IOException If an I/O error ocurred.
+     *
+     *
+     *
+     */
+    public void writeShort(int v) throws IOException;
+
+    /**
+     * Should write the int value of <tt>v</tt> (i.e., the 32 bits) to
+     * the output. Prior to writing, the output should be realigned at
+     * the byte level.
+     *
+     * @param v The value to write to the output
+     *
+     * @exception IOException If an I/O error ocurred.
+     *
+     *
+     *
+     */
+    public void writeInt(int v) throws IOException;
+
+    /**
+     * Should write the long value of <tt>v</tt> (i.e., the 64 bits)
+     * to the output. Prior to writing, the output should be realigned
+     * at the byte level.
+     *
+     * @param v The value to write to the output
+     *
+     * @exception IOException If an I/O error ocurred.
+     *
+     *
+     *
+     */
+    public void writeLong(long v) throws IOException;
+
+    /**
+     * Should write the IEEE float value <tt>v</tt> (i.e., 32 bits) to
+     * the output. Prior to writing, the output should be realigned at
+     * the byte level.
+     *
+     * @param v The value to write to the output
+     *
+     * @exception IOException If an I/O error ocurred.
+     *
+     *
+     *
+     */
+    public void writeFloat(float v) throws IOException;
+
+    /**
+     * Should write the IEEE double value <tt>v</tt> (i.e., 64 bits)
+     * to the output. Prior to writing, the output should be realigned
+     * at the byte level.
+     *
+     * @param v The value to write to the output
+     *
+     * @exception IOException If an I/O error ocurred.
+     *
+     *
+     *
+     */
+    public void writeDouble(double v) throws IOException;
+
+    /**
+     * Write an array of bytes
+     * NOTE this method was not in original RandomAccessIO interface, but
+     * was only defined on BufferedRandomAccessFile. Moved to interface
+     * for flexibility.
+     */
+    public void write(byte[] buf, int off, int len) throws IOException;
+
+    /**
+     * Any data that has been buffered must be written, and the stream should
+     * be realigned at the byte level.
+     *
+     * @exception IOException If an I/O error ocurred.
+     *
+     *
+     */
+    public void flush() throws IOException;
+
 }

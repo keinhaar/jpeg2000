@@ -42,6 +42,20 @@ public class PaletteBox extends Box {
         this.numEntries = lut.length / numc;
     }
 
+    public PaletteBox(int len, int numc, byte[] lut) {
+        this();
+        this.numEntries = len;
+        this.numc = numc;
+        this.bitDepth = new int[numc];
+        for (int i=0;i<numc;i++) {
+            bitDepth[i] = 8;
+        }
+        this.lut = new int[len * numc];
+        for (int i=0;i<lut.length;i++) {
+            this.lut[i] = lut[i] & 0xFF;
+        }
+    }
+
     /** Gets the LUT from the <code>IndexColorModel</code> as an two-dimensional
      *  byte array.
      */

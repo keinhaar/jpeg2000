@@ -141,7 +141,6 @@ public class SimpleJ2KWriteParam implements J2KWriteParam {
             quantizationType = new QuantTypeSpec(getNumTiles(), getNumComponents(), ModuleSpec.SPEC_TYPE_TILE_COMP, this, "expounded");
             filters = new AnWTFilterSpec(getNumTiles(), getNumComponents(), ModuleSpec.SPEC_TYPE_TILE_COMP, getQuantizationType(), this, "w9x7");
         }
-        System.out.println("QT="+quantizationType+" V="+null+" e="+transform+" numtc="+getNumTiles()+"/"+getNumComponents());
         componentTransformation = new ForwCompTransfSpec(getNumTiles(), getNumComponents(), ModuleSpec.SPEC_TYPE_TILE, getFilters(), this, Boolean.toString(transform));
     }
 

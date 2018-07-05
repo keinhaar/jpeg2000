@@ -34,7 +34,8 @@ import jj2000.j2k.io.EndianType;
  * 
  * @author http://bfo.com
  */
-public class ImageInputStream extends InputStream implements MsgLogger {
+public class J2KReader extends InputStream implements MsgLogger {
+
     private RandomAccessIO in;
     private Thread registerThread;
     private BlkImgDataSrc src;          // image data source
@@ -55,44 +56,36 @@ public class ImageInputStream extends InputStream implements MsgLogger {
     private ColorSpace cs;
 
     /**
-     * Create a new ImageInputStream
+     * Create a new J2KDecodeStream
+     * @param file a new J2KFile
      */
-    public ImageInputStream(RandomAccessIO is) throws IOException {
-        this.in = is;
-        registerThread = Thread.currentThread();
-        FacilityManager.registerMsgLogger(registerThread, this);
-        J2KImageReadParamJava j2kreadparam = new J2KImageReadParamJava();
-        j2kreadparam.setParsingEnabled(true);
-        J2KFile file = new J2KFile();
-        file.read(in);
+    public J2KReader(J2KFile file) throws IOException {
         for (Box box : file.getHeaderBox().getBoxes()) {
             addBox(box);
         }
-        try {
-            file.write(javax.xml.stream.XMLOutputFactory.newFactory().createXMLStreamWriter(System.out)).close();
-        } catch (javax.xml.stream.XMLStreamException e) {
-            throw new IOException(e);
-        }
 
-        RandomAccessIO codein = file.getCodeStreamBox().getRandomAccessIO();
-        System.out.println(in.getPos());
+        registerThread = Thread.currentThread();
+        FacilityManager.registerMsgLogger(registerThread, this);
+
+        in = file.getCodeStreamBox().getRandomAccessIO();
 
         HeaderInfo hi = new HeaderInfo();
-        HeaderDecoder hd = new HeaderDecoder(codein, j2kreadparam, hi);
+        J2KReadParam param = new SimpleJ2KReadParam();
+        HeaderDecoder hd = new HeaderDecoder(in, param, hi);
         depth = new int[hd.getNumComps()];
         for (int i=0;i<depth.length;i++) {
             depth[i] = hd.getOriginalBitDepth(i);
         }
         decSpec = hd.getDecoderSpecs();
-        breader = BitstreamReaderAgent.createInstance(codein, hd, j2kreadparam, decSpec, false, hi);
+        breader = BitstreamReaderAgent.createInstance(in, hd, param, decSpec, false, hi);
         if (isInterrupted()) {
             throw new InterruptedIOException();
         }
-        EntropyDecoder entdec = hd.createEntropyDecoder(breader, j2kreadparam);
+        EntropyDecoder entdec = hd.createEntropyDecoder(breader, param);
         if (isInterrupted()) {
             throw new InterruptedIOException();
         }
-        ROIDeScaler roids = hd.createROIDeScaler(entdec, j2kreadparam, decSpec);
+        ROIDeScaler roids = hd.createROIDeScaler(entdec, param, decSpec);
         if (isInterrupted()) {
             throw new InterruptedIOException();
         }
@@ -371,7 +364,7 @@ public class ImageInputStream extends InputStream implements MsgLogger {
     }
 
     //--------------------------------------------------------------
-    // ImageInputStream methods
+    // Image methods
 
     /**
      * Return the overwall width of the image, in pixels
@@ -482,6 +475,5 @@ public class ImageInputStream extends InputStream implements MsgLogger {
      */
     protected void rowCallback() throws IOException {
     }
-
 
 }

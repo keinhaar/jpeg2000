@@ -17,13 +17,14 @@ public class J2KFile {
         boxes = new ArrayList<Box>();
     }
 
-    public void read(RandomAccessIO in) throws IOException {
+    public J2KFile read(RandomAccessIO in) throws IOException {
         if (in.readInt() != 12 || in.readInt() != SIGMARKER>>32 || in.readInt() != (int)SIGMARKER) {
             throw new IOException("No JP2 Signature Box");
         }
         while (in.length() - in.getPos() > 0) {
             add(ContainerBox.readBox(in));
         }
+        return this;
     }
 
     public J2KFile add(Box box) throws IOException {
@@ -66,7 +67,7 @@ public class J2KFile {
         return Collections.<Box>unmodifiableList(boxes);
     }
 
-    public void write(OutputStream out) throws IOException {
+    public OutputStream write(OutputStream out) throws IOException {
         if (jp2h == null || jp2c == null) {
             throw new IOException("Missing jp2h or jp2c");
         }
@@ -76,6 +77,7 @@ public class J2KFile {
         for (int i=0;i<boxes.size();i++) {
             ContainerBox.writeBox(boxes.get(i), o);
         }
+        return out;
     }
 
     public XMLStreamWriter write(XMLStreamWriter out) throws XMLStreamException {
@@ -88,3 +90,4 @@ public class J2KFile {
     }
 
 }
+

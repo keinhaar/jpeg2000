@@ -69,8 +69,7 @@ import java.io.RandomAccessFile;
  * @see BinaryDataInput
  * @see BEBufferedRandomAccessFile
  * */
-public abstract class BufferedRandomAccessFile
-    implements RandomAccessIO, EndianType {
+public abstract class BufferedRandomAccessFile extends AbstractRandomAccessIO implements EndianType {
 
     /**
      * The name of the current file
@@ -419,34 +418,6 @@ public abstract class BufferedRandomAccessFile
     }
 
     /**
-     * Writes a byte to the stream. Prior to writing, the stream is
-     * realigned at the byte level.
-     *
-     * @param b The byte to write.
-     *
-     * @exception java.io.IOException If an I/O error ocurred.
-     * */
-    public final void write(byte b) throws IOException{
-	// As long as pos is less than the length of the buffer we can write
-	// to the buffer. If the position is after the buffer a new buffer is
-	// needed
-	if(pos<byteBuffer.length){
-	    if(isReadOnly)
-		throw new IOException("File is read only");
-	    byteBuffer[pos]=b;
-	    if(pos>=maxByte){
-		maxByte=pos+1;
-	    }
-	    pos++;
-	    byteBufferChanged =true;
-	}
-	else{
-	    readNewBuffer(offset+pos);
-	    write(b);
-	}
-    }
-
-    /**
      * Writes aan array of bytes to the stream. Prior to writing, the stream is
      * realigned at the byte level.
      *
@@ -470,25 +441,6 @@ public abstract class BufferedRandomAccessFile
     }
 
     /**
-     * Writes the byte value of <tt>v</tt> (i.e., 8 least
-     * significant bits) to the output. Prior to writing, the output
-     * should be realigned at the byte level.
-     *
-     * <P>Signed or unsigned data can be written. To write a signed
-     * value just pass the <tt>byte</tt> value as an argument. To
-     * write unsigned data pass the <tt>int</tt> value as an argument
-     * (it will be automatically casted, and only the 8 least
-     * significant bits will be written).
-     *
-     * @param v The value to write to the output
-     *
-     * @exception java.io.IOException If an I/O error ocurred.
-     * */
-    public final void writeByte(int v) throws IOException{
-	write(v);
-    }
-
-    /**
      * Any data that has been buffered must be written (including
      * buffering at the bit level), and the stream should be realigned
      * at the byte level.
@@ -504,51 +456,6 @@ public abstract class BufferedRandomAccessFile
     }
 
     /**
-     * Reads a signed byte (i.e., 8 bit) from the input. Prior to
-     * reading, the input should be realigned at the byte level.
-     *
-     * @return The next byte-aligned signed byte (8 bit) from the
-     * input.
-     *
-     * @exception java.io.EOFException If the end-of file was reached before
-     * getting all the necessary data.
-     *
-     * @exception java.io.IOException If an I/O error ocurred.
-     * */
-    public final byte readByte() throws EOFException, IOException {
-	if(pos<maxByte){ // The byte can be read from the buffer
-	    // In Java, the bytes are always signed.
-            return byteBuffer[pos++];
-	}
-	else if(isEOFInBuffer){ // EOF is reached
-            pos = maxByte+1; // Set position to EOF
-	    throw new EOFException();
-	}
-	else { // End of the buffer is reached
-	    readNewBuffer(offset+pos);
-	    return readByte();
-	}
-    }
-
-    /**
-     * Reads an unsigned byte (i.e., 8 bit) from the input. It is
-     * returned as an <tt>int</tt> since Java does not have an
-     * unsigned byte type. Prior to reading, the input should be
-     * realigned at the byte level.
-     *
-     * @return The next byte-aligned unsigned byte (8 bit) from the
-     * input, as an <tt>int</tt>.
-     *
-     * @exception java.io.EOFException If the end-of file was reached before
-     * getting all the necessary data.
-     *
-     * @exception java.io.IOException If an I/O error ocurred.
-     * */
-    public final int readUnsignedByte() throws EOFException, IOException{
-        return read();
-    }
-
-    /**
      * Returns the endianess (i.e., byte ordering) of the implementing
      * class. Note that an implementing class may implement only one
      * type of endianness or both, which would be decided at creation
@@ -561,31 +468,6 @@ public abstract class BufferedRandomAccessFile
      * */
     public int getByteOrdering(){
 	return byteOrdering;
-    }
-
-    /**
-     * Skips <tt>n</tt> bytes from the input. Prior to skipping, the
-     * input should be realigned at the byte level.
-     *
-     * @param n The number of bytes to skip
-     *
-     * @exception java.io.EOFException If the end-of file was reached before
-     * all the bytes could be skipped.
-     *
-     * @exception java.io.IOException If an I/O error ocurred.
-     * */
-    public int skipBytes(int n)throws EOFException, IOException{
-	if(n<0)
-	    throw new IllegalArgumentException("Can not skip negative number "+
-					       "of bytes");
-	if(n <= (maxByte-pos)){
-	    pos += n;
-	    return n;
-	}
-	else{
-	    seek(offset+pos+n);
-	    return n;
-	}
     }
 
     /**

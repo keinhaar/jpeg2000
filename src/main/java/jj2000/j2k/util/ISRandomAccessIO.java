@@ -604,6 +604,10 @@ public class ISRandomAccessIO implements RandomAccessIO {
         throw new IOException("read-only");
     }
 
+    public void write(byte[] b, int off, int len) throws IOException {
+        throw new IOException("read-only");
+    }
+
     /**
      * Throws an IOException since this class does not implement data output.
      */

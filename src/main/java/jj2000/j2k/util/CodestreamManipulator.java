@@ -50,7 +50,7 @@ import java.util.Vector;
 
 import jj2000.j2k.codestream.Markers;
 import jj2000.j2k.io.BEBufferedRandomAccessFile;
-import jj2000.j2k.io.BufferedRandomAccessFile;
+import jj2000.j2k.io.RandomAccessIO;
 
 /**
  * This class takes a legal JPEG 2000 codestream and performs some
@@ -168,8 +168,7 @@ public class CodestreamManipulator{
             return 0;
 
         // Open file for reading and writing
-        BEBufferedRandomAccessFile fi =
-            new BEBufferedRandomAccessFile(file, "rw+");
+        RandomAccessIO fi = new BEBufferedRandomAccessFile(file, "rw+");
         addedHeaderBytes -= fi.length();
 
         // Parse the codestream for SOT, SOP and EPH markers
@@ -205,7 +204,7 @@ public class CodestreamManipulator{
      *
      * @exception java.io.IOException If an I/O error ocurred.
      * */
-    private void parseAndFind(BufferedRandomAccessFile fi) throws IOException{
+    private void parseAndFind(RandomAccessIO fi) throws IOException{
         int length,pos,i,t,sop=0,eph=0;
         short marker;
         int halfMarker;
@@ -309,7 +308,7 @@ public class CodestreamManipulator{
      *
      * @exception java.io.IOException If an I/O error ocurred.
      * */
-    private void readAndBuffer(BufferedRandomAccessFile fi)throws IOException{
+    private void readAndBuffer(RandomAccessIO fi)throws IOException{
         int p,prem,length,t,markIndex;
 
         // Buffer main header
@@ -530,7 +529,7 @@ public class CodestreamManipulator{
      *
      * @exception java.io.IOException If an I/O error ocurred.
      * */
-    private void writeNewCodestream(BufferedRandomAccessFile fi)
+    private void writeNewCodestream(RandomAccessIO fi)
         throws IOException{
         int i,t,p,tp;
         int numTiles = tileParts.length;

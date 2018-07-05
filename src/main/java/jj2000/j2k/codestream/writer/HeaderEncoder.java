@@ -60,7 +60,7 @@ import jj2000.j2k.entropy.encoder.EBCOTRateAllocator;
 import jj2000.j2k.entropy.encoder.PostCompRateAllocator;
 import jj2000.j2k.image.ImgData;
 import jj2000.j2k.image.Tiler;
-import jj2000.j2k.io.BinaryDataOutput;
+import jj2000.j2k.io.RandomAccessIO;
 import jj2000.j2k.quantization.quantizer.StdQuantizer;
 import jj2000.j2k.roi.encoder.ROIScaler;
 import jj2000.j2k.util.MathUtil;
@@ -221,7 +221,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions {
      *
      * @param out Where to write the header.
      * */
-    public void writeTo(BinaryDataOutput out) throws IOException {
+    public void writeTo(RandomAccessIO out) throws IOException {
         int i,len;
         byte buf[];
 

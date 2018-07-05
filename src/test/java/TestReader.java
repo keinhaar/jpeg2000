@@ -17,7 +17,7 @@ public class TestReader {
             File outfile = new File(s + ".pnm");
             RandomAccessIO in = new BEBufferedRandomAccessFile(infile, "r", 8192);
             final int[] enumcs = new int[1];
-            ImageInputStream iin = new ImageInputStream(in) {
+            J2KReader iin = new J2KReader(new J2KFile().read(in)) {
                 protected ColorSpace createColorSpace(int e) {
                     enumcs[0] = e;
                     return super.createColorSpace(e);

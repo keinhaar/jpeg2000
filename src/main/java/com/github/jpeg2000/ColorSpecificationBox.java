@@ -2,7 +2,7 @@ package com.github.jpeg2000;
 
 import java.io.*;
 import jj2000.j2k.io.*;
-import java.awt.color.ICC_Profile;
+import java.awt.color.*;
 
 /** This class is defined to represent a Color Specification Box of JPEG JP2
  *  file format.  A Channel Definition Box has a length, and a fixed type
@@ -26,6 +26,22 @@ public class ColorSpecificationBox extends Box {
 
     public ColorSpecificationBox() {
         super(fromString("colr"));
+        method = 1;
+        approximation = 1;
+    }
+
+    public ColorSpecificationBox(ColorSpace cs) {
+        this();
+        if (cs.isCS_sRGB()) {
+            ecs = 16;
+        } else if (cs.getNumComponents() == 1) {
+            ecs = 17;
+        } else if (cs.getNumComponents() == 4) {
+            ecs = 12;
+        } else if (cs instanceof ICC_ColorSpace) {
+            method = 2;
+            profile = ((ICC_ColorSpace)cs).getProfile();
+        }
     }
 
     public ColorSpecificationBox(int ecs) {
