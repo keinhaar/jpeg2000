@@ -48,7 +48,7 @@ J2KFile file = new J2KFile();
 
 License
 --------------------
-The JJ2000 portion of the code is covered under the  [JJ2000](LICENSE-JJ2000.txt) license. The JAI portions of the code are covered under a modified [BSD](LICENSE-Sun.txt) license.
+The JJ2000 portion of the code is covered under the  [JJ2000](LICENSE-JJ2000.txt) license. The JAI portions of the code have mostly been removed, although some constributions to the main body and they are covered under a modified [BSD](LICENSE-Sun.txt) license. The BFO contributions are licensed under the same modified BSD license.
 
 History (which may be wrong)
 ----------------------------
