@@ -10,7 +10,7 @@ Download and run "ant". The jar "target/jj2000.jar" contains the API code, the "
 How to read a JP2 or JPX image
 ------------------------------
 This will create a PNM from a grayscale or RGB image.
-```
+```java
 import java.io.*;
 import com.github.jpeg2000.*;
 import jj2000.j2k.io.*;
@@ -33,7 +33,7 @@ out.close();
 How to write a JP2 file
 ------------------------------
 This will create a JP2 from a grayscale or RGB image.
-```
+```java
 import java.io.*;
 import com.github.jpeg2000.*;
 import jj2000.j2k.io.*;
