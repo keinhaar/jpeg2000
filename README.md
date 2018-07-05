@@ -15,8 +15,9 @@ import java.io.*;
 import com.github.jpeg2000.*;
 import jj2000.j2k.io.*;
 
-RandomAccessIO in = new BEBufferedRandomAccessFile(infile, "r", 8192);
-ImageInputStream iin = new ImageInputStream(in);
+J2KFile file = new J2KFile();
+file.read(new BEBufferedRandomAccessFile(infile, "r", 8192));
+J2KReader iin = new J2KReader(file);
 OutputStream out = new BufferedOutputStream(new FileOutputStream(outfile));
 if (iin.getNumComponents() == 1) {
     out.write(("P5 "+iin.getWidth()+" "+iin.getHeight()+" 255\n").getBytes("ISO-8859-1"));
@@ -29,7 +30,21 @@ while ((c=iin.read()) >= 0) {
 }
 out.close();
 ```
+How to write a JP2 file
+------------------------------
+This will create a JP2 from a grayscale or RGB image.
+```
+import java.io.*;
+import com.github.jpeg2000.*;
+import jj2000.j2k.io.*;
 
+BufferedImage image = ...
+J2KWriter writer = new J2KWriter();
+writer.setCompressionRatio(8, false);
+writer.setSource(image, 256);
+writer.write(new FileOutputStream("out.jp2"));
+J2KFile file = new J2KFile();
+```
 
 License
 --------------------

@@ -3,6 +3,8 @@ package com.github.jpeg2000;
 /**
  * Interface which defines the parameters required to write a JP2 image.
  * Abstracted away from J2KImageReadParamJava
+ *
+ * @author http://bfo.com
  */
 public interface J2KReadParam {
     

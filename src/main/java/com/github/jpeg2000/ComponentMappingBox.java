@@ -5,14 +5,14 @@ import jj2000.j2k.io.*;
 import javax.xml.stream.*;
 
 /** 
- *  This class is defined to represent a Color Specification Box of JPEG JP2
- *  file format.  A Channel Definition Box has a length, and a fixed type
- *  of "cmap".  This box exists if and only is a PaletteBox exists.  Its
- *  content defines the type LUT output components and their mapping to the
- *  color component.
+ * This represents the "cmap" box.
+ * This box exists if and only is a PaletteBox exists.  Its
+ * content defines the type LUT output components and their mapping to the
+ * color component.
+ *
+ * @author http://bfo.com
  */
 public class ComponentMappingBox extends Box {
-    /** The data elements. */
     private short[] components;
     private byte[] type;
     private byte[] map;
@@ -21,8 +21,9 @@ public class ComponentMappingBox extends Box {
         super(fromString("cmap"));
     }
 
-    /** Constructs a <code>ComponentMappingBox</code> from the provided
-     *  component mapping.
+    /**
+     * Constructs a <code>ComponentMappingBox</code> from the provided
+     * component mapping.
      */
     public ComponentMappingBox(short[] comp, byte[] t, byte[] m) {
         this();
@@ -35,7 +36,6 @@ public class ComponentMappingBox extends Box {
         return components.length * 4;
     }
 
-    /** Parse the component mapping from the provided content data array. */
     @Override public void read(RandomAccessIO in) throws IOException {
         int len = in.length() / 4;
         components = new short[len];

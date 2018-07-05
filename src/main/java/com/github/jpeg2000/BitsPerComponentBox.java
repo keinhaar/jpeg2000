@@ -4,13 +4,16 @@ import jj2000.j2k.io.RandomAccessIO;
 import java.io.*;
 import javax.xml.stream.*;
 
-/** This class is defined to represent a Bits Per Component Box of JPEG
- *  JP2 file format.  A Bits Per Component box has a length, and a fixed
- *  type of "bpcc".  Its content is a byte array containing the bit
- *  depths of the color components.
+/**
+ * This class is defined to represent a Bits Per Component Box of JPEG
+ * JP2 file format.  A Bits Per Component box has a length, and a fixed
+ * type of "bpcc".  Its content is a byte array containing the bit
+ * depths of the color components.
  *
- *  This box is necessary only when the bit depth are not identical for all
- *  the components.
+ * This box is necessary only when the bit depth are not identical for all
+ * the components.
+ *
+ * @author http://bfo.com
  */
 public class BitsPerComponentBox extends Box {
 

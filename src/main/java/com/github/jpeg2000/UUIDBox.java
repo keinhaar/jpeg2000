@@ -9,14 +9,15 @@ import javax.xml.namespace.*;
 import javax.xml.transform.stream.*;
 import javax.xml.transform.stax.*;
 
-/** This class is defined to represent a UUID Box of JPEG JP2
- *  file format.  This type of box has a length, a type of "uuid".  Its
- *  content is a 16-byte UUID followed with a various-length data.
+/**
+ * This class represents the "uuid" box.
+ * Its content is a 16-byte UUID followed with a various-length data.
+ *
+ * @author http://bfo.com
  */
 public class UUIDBox extends Box {
 
     public static final String UUID_XMP = "be7acfcb97a942e89c71999491e3afac";
-    /** The data elements in this UUID box. */
     private byte[] uuid;
     private byte[] data;
 
@@ -27,6 +28,11 @@ public class UUIDBox extends Box {
         super(fromString("uuid"));
     }
 
+    /**
+     * Create a new UUID box
+     * @param key the key, which must be a 16 byte long array encoded as a 32-character long hex string
+     * @parma data the data
+     */
     public UUIDBox(String key, byte[] data) {
         this();
         if (key.length() != 32) {

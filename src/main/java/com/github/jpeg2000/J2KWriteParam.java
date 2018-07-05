@@ -17,8 +17,18 @@ import jj2000.j2k.wavelet.analysis.AnWTFilterSpec;
 /**
  * Interface which defines the parameters required to write a JP2 image.
  * Abstracted away from the horror that is J2KImageWriteParamJava
+ * 
+ * @author http://bfo.com
  */
 public interface J2KWriteParam {
+
+    /**
+     * Return the desired compression ratio; a value of
+     * 1 implies completely lossless; values of 4-6 are
+     * visually lossless, up towards 20 for lossy but
+     * acceptable
+     */
+    public float getCompressionRatio();
 
     public boolean getLossless();
 

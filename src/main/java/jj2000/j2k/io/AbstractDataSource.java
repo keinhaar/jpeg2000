@@ -247,7 +247,7 @@ public abstract class AbstractDataSource implements BlkImgDataSrc {
     }
 
     public int getNomRangeBits(int c) {
-        return 8;
+        return bpc;
     }
 
     public int getImgULX() {

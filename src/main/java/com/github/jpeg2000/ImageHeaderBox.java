@@ -4,18 +4,19 @@ import java.io.*;
 import jj2000.j2k.io.*;
 import javax.xml.stream.*;
 
-/** This class is defined to represent an Image Header Box of JPEG JP2 file
- *  format.  An Image Header Box has a length, and a fixed type of "ihdr".
+/**
+ * This represents the "ihdr" Box
  *
  * The content of an image header box contains the width/height, number of
  * image components, the bit depth (coded with sign/unsign information),
  * the compression type (7 for JP2 file), the flag to indicate the color
  * space is known or not, and a flag to indicate whether the intellectual
  * property information included in this file.
+ *
+ * @author http://bfo.com
  */
 public class ImageHeaderBox extends Box {
 
-    /** The element values. */
     private int width;
     private int height;
     private short numComp;

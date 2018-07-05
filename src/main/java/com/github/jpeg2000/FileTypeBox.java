@@ -4,15 +4,17 @@ import java.io.*;
 import jj2000.j2k.io.*;
 import javax.xml.stream.*;
 
-/** This class is defined to represent a File Type Box of JPEG JP2 file
- *  format.  A File Type Box has a length, and a fixed type of "ftyp".
+/**
+ * This represents the "ftyp: box.
  *
  * The content of a file type box contains the brand ("jp2 " for JP2 file",
  * the minor version (0 for JP2 file format), and a compatibility list (one of
  * which should be "jp2 " if brand is not "jp2 ".)
+ *
+ * @author http://bfo.com
  */
 public class FileTypeBox extends Box {
-    /** The element values. */
+
     private int brand;
     private int minorVersion;
     private int[] compat;

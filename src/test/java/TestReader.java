@@ -20,7 +20,7 @@ public class TestReader {
             J2KFile file = new J2KFile().read(in);
             file.write(javax.xml.stream.XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)).flush();
 
-            J2KReader iin = new J2KReader(new J2KFile().read(in)) {
+            J2KReader iin = new J2KReader(file) {
                 protected ColorSpace createColorSpace(int e) {
                     enumcs[0] = e;
                     return super.createColorSpace(e);

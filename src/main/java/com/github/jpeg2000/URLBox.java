@@ -4,10 +4,12 @@ import java.io.*;
 import jj2000.j2k.io.*;
 import javax.xml.stream.*;
 
-/** This class is defined to represent a Data Entry URL Box of JPEG JP2
- *  file format.  A Data Entry URL Box has a length, and a fixed type
- *  of "url ".  Its content are a one-byte version, a three-byte flags and
- *  a URL pertains to the UUID List box within its UUID Info superbox.
+/**
+ * This class represents the "url " box.
+ * Its content are a one-byte version, a three-byte flags and
+ * a URL pertains to the UUID List box within its UUID Info superbox.
+ *
+ * @author http://bfo.com
  */
 public class URLBox extends Box {
 

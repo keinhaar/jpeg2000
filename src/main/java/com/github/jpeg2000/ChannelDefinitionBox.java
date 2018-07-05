@@ -7,10 +7,12 @@ import javax.xml.stream.*;
 
 
 /**
- *  This class is designed to represent a Channel Definition Box of
- *  JPEG JP2 file format.  A Channel Definition Box has a length, and
- *  a fixed type of "cdef".  Its content defines the type of the image
- *  channels: color channel, alpha channel or premultiplied alpha channel.
+ * This class is designed to represent a Channel Definition Box of
+ * JPEG JP2 file format.  A Channel Definition Box has a length, and
+ * a fixed type of "cdef".  Its content defines the type of the image
+ * channels: color channel, alpha channel or premultiplied alpha channel.
+ *
+ * @author http://bfo.com
  */
 public class ChannelDefinitionBox extends Box {
 
@@ -20,14 +22,29 @@ public class ChannelDefinitionBox extends Box {
     private short[] types;
     private short[] associations;
 
-    /** Fills the channel definitions into the arrays based on the number
-     *  of components and isPremultiplied.
-     */
-    public static void fillBasedOnBands(int numComps,
-                                        boolean isPremultiplied,
-                                        short[] c,
-                                        short[] t,
-                                        short[] a) {
+    public ChannelDefinitionBox() {
+        super(fromString("cdef"));
+    }
+
+    /** Constructs a <code>ChannelDefinitionBox</code> based on the provided  <code>ColorModel</code>.
+     *
+     * This was from JAI but is untested by BFO
+     *
+    public ChannelDefinitionBox(ColorModel colorModel) {
+        this();
+
+        // creates the buffers for the channel definitions.
+        short length = (short)(colorModel.getComponentSize().length - 1);
+        num = (short)(length * (colorModel.isAlphaPremultiplied() ? 3 : 2));
+        channels = new short[num];
+        types = new short[num];
+        associations = new short[num];
+
+        // fills the arrays.
+        fillBasedOnBands(length, colorModel.isAlphaPremultiplied(), channels, types, associations);
+    }
+
+    private static void fillBasedOnBands(int numComps, boolean isPremultiplied, short[] c, short[] t, short[] a) {
         int num = numComps * (isPremultiplied ? 3 : 2);
         if (isPremultiplied) {
             for (int i = numComps * 2; i < num; i++) {
@@ -47,27 +64,7 @@ public class ChannelDefinitionBox extends Box {
             t[j] = 1;           // 1 -- transparency
         }
     }
-
-    public ChannelDefinitionBox() {
-        super(fromString("cdef"));
-    }
-
-    /** Constructs a <code>ChannelDefinitionBox</code> based on the provided
-     *  <code>ColorModel</code>.
      */
-    public ChannelDefinitionBox(ColorModel colorModel) {
-        this();
-
-        // creates the buffers for the channel definitions.
-        short length = (short)(colorModel.getComponentSize().length - 1);
-        num = (short)(length * (colorModel.isAlphaPremultiplied() ? 3 : 2));
-        channels = new short[num];
-        types = new short[num];
-        associations = new short[num];
-
-        // fills the arrays.
-        fillBasedOnBands(length, colorModel.isAlphaPremultiplied(), channels, types, associations);
-    }
 
     /** 
      * Constructs a <code>ChannelDefinitionBox</code> based on the provided

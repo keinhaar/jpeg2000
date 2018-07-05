@@ -5,6 +5,11 @@ import java.util.*;
 import jj2000.j2k.io.*;
 import javax.xml.stream.*;
 
+/**
+ * This represents the "jp2h" box
+ *
+ * @author http://bfo.com
+ */
 public class HeaderBox extends ContainerBox {
     
     private ImageHeaderBox ihdr;

@@ -7,9 +7,9 @@ import jj2000.j2k.io.SubRandomAccessIO;
 import javax.xml.stream.*;
 
 /**
- * This class is defined to create the box of JP2 file format.  A box has
- *  a length, a type, an optional extra length and its content.  The subclasses
- *  should explain the content information.
+ * This represents any Box that contains other Boxes.
+ *
+ * @author http://bfo.com
  */
 public class ContainerBox extends Box {
     

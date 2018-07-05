@@ -9,8 +9,10 @@ import javax.xml.stream.*;
 
 /**
  * This class is defined to create the box of JP2 file format.  A box has
- *  a length, a type, an optional extra length and its content.  The subclasses
- *  should explain the content information.
+ * a length, a type, an optional extra length and its content.  The subclasses
+ * should explain the content information.
+ *
+ * @author http://bfo.com
  */
 public class Box {
     

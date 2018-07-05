@@ -5,15 +5,16 @@ import jj2000.j2k.io.*;
 import java.awt.image.IndexColorModel;
 import javax.xml.stream.*;
 
-/** This class is designed to represent a palette box for JPEG 2000 JP2 file
- *  format.  A palette box has a length, and a fixed type of "pclr".
+/** 
+ * This class represents the "pclr" box.
  *
  * Its content contains the number of palette entry, the number of color
  * components, the bit depths of the output components, the LUT.
  *
- * Currently, only 8-bit color index is supported.
+ * @author http://bfo.com
  */
 public class PaletteBox extends Box {
+
     private int numEntries;
     private int numc;
     private int[] bitDepth;
@@ -24,8 +25,8 @@ public class PaletteBox extends Box {
     }
 
     /**
-     * Constructs a <code>PlatteBox</code> from an
-     * <code>IndexColorModel</code>.
+     * Constructs a <code>PlatteBox</code> from an <code>IndexColorModel</code>.
+     * Lifted from JAI, untested
      */
     public PaletteBox(IndexColorModel icm) {
         this(icm.hasAlpha() ? new int[] { 8, 8, 8, 8 } : new int[] { 8, 8, 8 }, getLUT(icm));

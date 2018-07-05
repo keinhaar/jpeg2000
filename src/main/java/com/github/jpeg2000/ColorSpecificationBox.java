@@ -5,11 +5,13 @@ import jj2000.j2k.io.*;
 import java.awt.color.*;
 import javax.xml.stream.*;
 
-/** This class is defined to represent a Color Specification Box of JPEG JP2
- *  file format.  A Channel Definition Box has a length, and a fixed type
- *  of "colr".  Its content contains the method to define the color space,
- *  the precedence and approximation accuracy (0 for JP2 files), the
- *  enumerated color space, and the ICC color profile if any.
+/**
+ * This represents the "colr" box.
+ * Its content contains the method to define the color space,
+ * the precedence and approximation accuracy (0 for JP2 files), the
+ * enumerated color space, and the ICC color profile if any.
+ *
+ * @author http://bfo.com
  */
 public class ColorSpecificationBox extends Box {
 
@@ -18,7 +20,6 @@ public class ColorSpecificationBox extends Box {
     public static final int ECS_GRAY = 17;
     public static final int ECS_YCC = 18;
 
-    /** The elements' values. */
     private byte method;
     private byte precedence;
     private byte approximation;

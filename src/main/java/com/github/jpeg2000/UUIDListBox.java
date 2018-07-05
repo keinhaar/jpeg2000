@@ -4,9 +4,11 @@ import java.io.*;
 import jj2000.j2k.io.*;
 import javax.xml.stream.*;
 
-/** This class is defined to represent a UUID list Box of JPEG JP2
- *  file format.  This type of box has a length, a type of "ulst".  Its
- *  contents include the number of UUID entry and a list of 16-byte UUIDs.
+/** 
+ * This class represents the "ulst" box.
+ * Its contents include the number of UUID entry and a list of 16-byte UUIDs.
+ *
+ * @author http://bfo.com
  */
 public class UUIDListBox extends Box {
 
@@ -16,14 +18,30 @@ public class UUIDListBox extends Box {
         super(fromString("ulst"));
     }
 
-    /** Constructs a <code>UUIDListBox</code> from the provided uuid number
-     *  and uuids.  The provided uuids should have a size of 16; otherwise,
-     *  <code>Exception</code> may thrown in later the process.  The provided
-     *  number should consistent with the size of the uuid array.
+    /**
+     * Constructs a <code>UUIDListBox</code> from the provided list of UUIDs
+     * @param uuids a list of uuids, each represented as 32-character long strings representing a hex-encoded 16-byte array
      */
-    public UUIDListBox(byte[][] uuids) {
+    public UUIDListBox(String[] uuids) {
         this();
-        this.uuids = uuids;
+        this.uuids = new byte[uuids.length][16];
+        for (int j=0;j<uuids.length;j++) {
+            String key = uuids[j];
+            if (key.length() != 32) {
+                throw new IllegalArgumentException();
+            }
+            for (int i=0;i<16;i++) {
+                this.uuids[j][i] = (byte)((Character.digit(key.charAt(i*2), 16) << 4) + Character.digit(key.charAt(i*2+1), 16));
+            }
+        }
+    }
+
+    public int getSize() {
+        return uuids.length;
+    }
+
+    public String getUUID(int i) {
+        return toString(uuids[i]);
     }
 
     @Override public int getLength() {

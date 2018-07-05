@@ -19,7 +19,7 @@ import javax.xml.stream.*;
 class TestWriter {
     public static void main(String[] args) throws Exception {
         J2KWriter c = new J2KWriter();
-        c.setLossless(true);
+        c.setCompressionRatio(4, true);
         c.setSource(ImageIO.read(new File(args[0])), 256);
         OutputStream out = new BufferedOutputStream(new FileOutputStream("out.jp2"));
         c.write(out);

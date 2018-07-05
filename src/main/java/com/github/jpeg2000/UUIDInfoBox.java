@@ -5,6 +5,11 @@ import java.util.*;
 import jj2000.j2k.io.*;
 import javax.xml.stream.*;
 
+/**
+ * Represents the "uinf" box
+ *
+ * @author http://bfo.com
+ */
 public class UUIDInfoBox extends ContainerBox {
     
     private UUIDListBox ulst;

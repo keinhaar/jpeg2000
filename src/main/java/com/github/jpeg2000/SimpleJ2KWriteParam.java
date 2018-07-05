@@ -16,6 +16,8 @@ import jj2000.j2k.wavelet.analysis.AnWTFilterSpec;
 
 /**
  * A minimal instance of the J2KWriteParam interface.
+ *
+ * @author http://bfo.com
  */
 public class SimpleJ2KWriteParam implements J2KWriteParam {
 
@@ -36,6 +38,8 @@ public class SimpleJ2KWriteParam implements J2KWriteParam {
 
     private int startLevelROI;
 
+    private float ratio;
+
     private String layers;
     private String progressionName;
 
@@ -52,13 +56,17 @@ public class SimpleJ2KWriteParam implements J2KWriteParam {
 
     private final StringSpec stringtrue, stringfalse;
 
-    public SimpleJ2KWriteParam(int numc, int numtiles, boolean lossless) {
+    /**
+     * Create a new SimpleJ2KWriteParam
+     * @param numc the number of components
+     * @param numtiles the number of tiles
+     */
+    public SimpleJ2KWriteParam(int numc, int numtiles) {
         this.numc = numc;
         this.numtiles = numtiles;
         stringtrue = new StringSpec(getNumTiles(), getNumComponents(), ModuleSpec.SPEC_TYPE_TILE_COMP, "false", new String[] { "true", "false" }, null, "true");
         stringfalse = new StringSpec(getNumTiles(), getNumComponents(), ModuleSpec.SPEC_TYPE_TILE_COMP, "false", new String[] { "true", "false" }, null, null);
 
-        setLossless(true);
         setLayers("0.015 +20 2.0 +10");
         setProgressionName("layer");
         setDecompositionLevel(5);
@@ -68,12 +76,23 @@ public class SimpleJ2KWriteParam implements J2KWriteParam {
         setFilters(true, true);
         setROIs(-1, false, null);
         setMQ(null, null);
+        setCompression(1, true);
+    }
 
-        if (lossless) {
-            setLossless(true);
-            setFilters(true, true);
-//            setDecompositionLevel(0);
-        }
+    /**
+     * Set the desired Compression Ratio. A value of
+     * 1 implies lossless, higher ratios involve loss
+     * @param ratio the compression ratio
+     * @param reversible if true, the reversible filter is used.  The irreversible one tends to give slightly better results but may use more memory
+     */
+    public void setCompression(float ratio, boolean reversible) {
+        this.ratio = Math.max(1, ratio);
+        lossless = ratio == 1;
+        setFilters(lossless || reversible, true);
+    }
+
+    public float getCompressionRatio() {
+        return ratio;
     }
 
     public int getNumComponents() {
@@ -83,10 +102,6 @@ public class SimpleJ2KWriteParam implements J2KWriteParam {
     public int getNumTiles() {
         return numtiles;
     }
-
-    public void setLossless(boolean lossless) {
-        this.lossless = lossless;
-    }  
 
     public boolean getLossless() {
         return lossless;

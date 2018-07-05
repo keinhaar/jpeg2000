@@ -4,9 +4,10 @@ import java.io.*;
 import jj2000.j2k.io.*;
 import javax.xml.stream.*;
 
-/** This class is defined to represent a XML box of JPEG JP2
- *  file format.  This type of box has a length, a type of "xml ".  Its
- *  content is a text string of a XML instance.
+/** 
+ * This class represnts the "xml " box.
+ *
+ * @author http://bfo.com
  */
 public class XMLBox extends Box {
 
@@ -14,4 +15,5 @@ public class XMLBox extends Box {
         super(fromString("xml "));
     }
 
+    // TODO
 }

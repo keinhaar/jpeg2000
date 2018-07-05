@@ -7,9 +7,10 @@ import javax.xml.stream.*;
 import jj2000.j2k.codestream.*;
 import jj2000.j2k.codestream.reader.*;
 
-/** This class is defined to represent a XML box of JPEG JP2
- *  file format.  This type of box has a length, a type of "xml ".  Its
- *  content is a text string of a XML instance.
+/**
+ * This represents the "jp2c" box, which contains the CodeStream
+ *
+ * @author http://bfo.com
  */
 public class CodeStreamBox extends Box {
 
@@ -52,6 +53,9 @@ public class CodeStreamBox extends Box {
         }
     }
 
+    /**
+     * Return a RandomAccessIO which contains the codestream to pass to the BitstreamReader
+     */
     public RandomAccessIO getRandomAccessIO() throws IOException {
         if (io != null) {
             io.seek(0);

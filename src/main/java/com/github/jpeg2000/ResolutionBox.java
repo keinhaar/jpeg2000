@@ -4,12 +4,13 @@ import java.io.*;
 import jj2000.j2k.io.*;
 import javax.xml.stream.*;
 
-/** This class is defined to represent a Resolution Box of JPEG JP2
- *  file format.  A Data Entry URL Box has a length, and a fixed type
- *  of "resc" (capture resolution) or "resd" (default display resolution).
+/** 
+ * This class represents the "resc" and "resd" boxes.
  *
  * Its contens includes the resolution numerators, denominator, and the
  * exponents for both horizontal and vertical directions.
+ *
+ * @author http://bfo.com, with large parts copied from JAI source
  */
 public class ResolutionBox extends Box {
 

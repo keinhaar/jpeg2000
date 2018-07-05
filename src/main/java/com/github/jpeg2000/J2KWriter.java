@@ -1,5 +1,3 @@
-// $Id: JPXInputStreamBFO.java 28760 2018-06-28 16:23:39Z mike $
-
 package com.github.jpeg2000;
 
 import java.io.*;
@@ -19,52 +17,95 @@ import jj2000.j2k.wavelet.analysis.*;
 import jj2000.j2k.*;
 import jj2000.j2k.io.*;
 
+/**
+ * A class to create a J2KFile. J2K compressed data may be
+ * created from any source, although for convenience a
+ * method is supplied to create from a BufferedImage. Compression
+ * requires all the image data all the time, so compression from
+ * a stream is not possible.
+ * 
+ * @author http://bfo.com
+ */
 public class J2KWriter implements MsgLogger {
 
     private ColorSpecificationBox colr;
     private PaletteBox pclr;
     private J2KWriteParam param;
-    private boolean lossless;
+    private float ratio;
+    private boolean reversible;
     private BlkImgDataSrc src;
 
+    /**
+     * Create a new J2KWriter
+     */
     public J2KWriter() {
     }
 
-    public void flush() {
+    @Override public void flush() {
     }
 
-    public void printmsg(int sev, String msg) {
+    @Override public void printmsg(int sev, String msg) {
     }
 
-    public void println(String str, int flind, int ind) {
+    @Override public void println(String str, int flind, int ind) {
     }
 
+    /**
+     * Set the write parameters. Usually this isn't required, but
+     * it may be called for fine control of the encoding
+     */
     public void setParams(J2KWriteParam param) {
         this.param = param;
     }
 
-    public void setLossless(boolean lossless) {
-        this.lossless = lossless;
+    /**
+     * Set the compresison ratio.
+     * @see SimpleJ2KWriteParam#setCompressionRatio
+     */
+    public void setCompressionRatio(float ratio, boolean reversible) {
+        this.ratio = ratio;
+        this.reversible = reversible;
     }
 
+    /**
+     * Set the ColorSpace that is written out. This is required if
+     * a BufferedImage wasn't used as a source
+     */
     public void setColorSpace(ColorSpace space) {
         colr = new ColorSpecificationBox(space);
         pclr = null;
     }
 
-    public void setColorSpace(ColorSpace space, int numc, int size, byte[] palette) {
+    /**
+     * Set the ColorSpace that is written out, and use a palette
+     * @param space the underlying ColorSpace
+     * @param size the number of entries in the palette
+     * @param numc the number of components in the palette index
+     * @param palette the palette entries, which are accessed as <code>palette[entry * numc + component]</code>
+     */
+    public void setColorSpace(ColorSpace space, int size, int numc, byte[] palette) {
         colr = new ColorSpecificationBox(space);
         pclr = new PaletteBox(size, numc, palette);
     }
 
+    /**
+     * Set the Source for the image. Any BlkImgDataSrc may be used, but
+     * a {@link AbstractDataSource} would be the easiest
+     */
     public void setSource(BlkImgDataSrc src) {
         this.src = src;
     }
 
+    /**
+     * Set the Source for the image to the BufferedImage.
+     * @param img the image
+     * @param tilesize the tilesize, 256 is recommended
+     */
     public void setSource(BufferedImage img, int tilesize) {
         setSource(AbstractDataSource.newInstance(img, tilesize));
         ColorModel cm = img.getColorModel();
         if (cm instanceof IndexColorModel) {
+            // TODO
         } else {
             setColorSpace(cm.getColorSpace());
         }
@@ -75,8 +116,11 @@ public class J2KWriter implements MsgLogger {
             throw new IllegalStateException("No source");
         }
         if (param == null) {
-            param = new SimpleJ2KWriteParam(src.getNumComps(), src.getNumTiles(), lossless);
-//            param.setProgressionName("res");
+            param = new SimpleJ2KWriteParam(src.getNumComps(), src.getNumTiles());
+            ((SimpleJ2KWriteParam)param).setProgressionName("res");
+        }
+        if (ratio != 0 && param instanceof SimpleJ2KWriteParam) {
+            ((SimpleJ2KWriteParam)param).setCompression(ratio, reversible);
         }
         if (param.getNumComponents() != src.getNumComps() || param.getNumTiles() != src.getNumTiles()) {
             throw new IllegalStateException("Param and source do not match");
@@ -86,12 +130,27 @@ public class J2KWriter implements MsgLogger {
 
         J2KFile file = new J2KFile();
         HeaderBox jp2h = new HeaderBox();
-        jp2h.add(new ImageHeaderBox(src.getImgWidth(), src.getImgHeight(), src.getNumComps(), 8, false, false));
+        int bpc = src.getNomRangeBits(0);
+        int totbpc = bpc;
+        for (int i=1;i<src.getNumComps();i++) {
+            totbpc += src.getNomRangeBits(i);
+            if (src.getNomRangeBits(i) != bpc) {
+                bpc = 255;
+            }
+        }
+        jp2h.add(new ImageHeaderBox(src.getImgWidth(), src.getImgHeight(), src.getNumComps(), bpc, false, false));
         if (colr != null) {
             jp2h.add(colr);
         }
         if (pclr != null) {
             jp2h.add(pclr);
+        }
+        if (bpc == 255) {
+            byte[] b = new byte[src.getNumComps()];
+            for (int i=0;i<b.length;i++) {
+                b[i] = (byte)src.getNomRangeBits(i);
+            }
+            jp2h.add(new BitsPerComponentBox(b));
         }
         file.add(new FileTypeBox());
         file.add(jp2h);
@@ -115,7 +174,8 @@ public class J2KWriter implements MsgLogger {
             EntropyCoder ecoder = EntropyCoder.createInstance(rois, param, param.getCodeBlockSize(), param.getPrecinctPartition(), param.getBypass(), param.getResetMQ(), param.getTerminateOnByte(), param.getCausalCXInfo(), param.getCodeSegSymbol(), param.getMethodForMQLengthCalc(), param.getMethodForMQTermination());
 
             FileCodestreamWriter bwriter = new FileCodestreamWriter(bout, Integer.MAX_VALUE);
-            float rate = Float.POSITIVE_INFINITY;
+            ratio = param.getCompressionRatio();
+            float rate = ratio == 1 ? Float.POSITIVE_INFINITY : totbpc / ratio;
             PostCompRateAllocator ralloc = PostCompRateAllocator.createInstance(ecoder, rate, bwriter, param);
             HeaderEncoder headenc = new HeaderEncoder(src, new boolean[src.getNumComps()], dwt, src, param, rois, ralloc);
             ralloc.setHeaderEncoder(headenc);

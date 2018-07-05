@@ -1,5 +1,3 @@
-// $Id: JPXInputStreamBFO.java 28760 2018-06-28 16:23:39Z mike $
-
 package com.github.jpeg2000;
 
 import java.io.*;
@@ -56,8 +54,8 @@ public class J2KReader extends InputStream implements MsgLogger {
     private ColorSpace cs;
 
     /**
-     * Create a new J2KDecodeStream
-     * @param file a new J2KFile
+     * Create a new JsKReader
+     * @param file the J2KFile to read from
      */
     public J2KReader(J2KFile file) throws IOException {
         for (Box box : file.getHeaderBox().getBoxes()) {
