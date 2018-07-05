@@ -52,7 +52,7 @@ public class Box {
     }
 
     public static String toString(byte[] v) {
-        String s = new BigInteger(1, v).toString();
+        String s = new BigInteger(1, v).toString(16);
         if ((s.length() & 1) == 1) {
             s = "0" + s;
         }
