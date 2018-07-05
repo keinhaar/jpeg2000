@@ -2,6 +2,7 @@ package com.github.jpeg2000;
 
 import java.io.*;
 import jj2000.j2k.io.*;
+import javax.xml.stream.*;
 
 /** This class is defined to represent an Image Header Box of JPEG JP2 file
  *  format.  An Image Header Box has a length, and a fixed type of "ihdr".
@@ -98,4 +99,19 @@ public class ImageHeaderBox extends Box {
         return intelProp;
     }
 
+    @Override public void write(XMLStreamWriter out) throws XMLStreamException {
+        out.writeEmptyElement(toString(getType()).trim());
+        out.writeAttribute("length", Integer.toString(getLength()));
+        out.writeAttribute("width", Integer.toString(getWidth()));
+        out.writeAttribute("height", Integer.toString(getHeight()));
+        out.writeAttribute("numc", Integer.toString(getNumComponents()));
+        if (getBitDepth() != 255) {
+            out.writeAttribute("depth", Integer.toString(getBitDepth()));
+        }
+        if (getCompressionType() != 7) {
+            out.writeAttribute("compression", Integer.toString(getCompressionType()));
+        }
+        out.writeAttribute("unknownColorSpace", Integer.toString(getUnknownColorspace()));
+        out.writeAttribute("ip", Integer.toString(getIntellectualProperty()));
+    }
 }

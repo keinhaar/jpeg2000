@@ -2,6 +2,7 @@ package com.github.jpeg2000;
 
 import java.io.*;
 import jj2000.j2k.io.*;
+import javax.xml.stream.*;
 
 /** This class is defined to represent a Resolution Box of JPEG JP2
  *  file format.  A Data Entry URL Box has a length, and a fixed type
@@ -94,5 +95,13 @@ public class ResolutionBox extends Box {
         out.write(expV);
         out.write(expH);
     }
+
+    @Override public void write(XMLStreamWriter out) throws XMLStreamException {
+        out.writeEmptyElement(toString(getType()).trim());
+        out.writeAttribute("length", Integer.toString(getLength()));
+        out.writeAttribute("hres", Float.toString(hRes));
+        out.writeAttribute("vres", Float.toString(vRes));
+    }
+
 
 }

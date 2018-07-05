@@ -5,6 +5,7 @@ import javax.xml.stream.*;
 import java.util.*;
 import java.math.BigInteger;
 import jj2000.j2k.io.RandomAccessIO;
+import javax.xml.stream.*;
 
 /**
  * This class is defined to create the box of JP2 file format.  A box has
@@ -48,6 +49,14 @@ public class Box {
             throw new IllegalArgumentException();
         }
         return (s.charAt(0)<<24) | (s.charAt(1)<<16) | (s.charAt(2)<<8) | s.charAt(3);
+    }
+
+    public static String toString(byte[] v) {
+        String s = new BigInteger(1, v).toString();
+        if ((s.length() & 1) == 1) {
+            s = "0" + s;
+        }
+        return s;
     }
 
     public static String toString(int v) {
@@ -128,11 +137,7 @@ public class Box {
         out.writeStartElement(toString(getType()).trim());
         out.writeAttribute("length", Integer.toString(getLength()));
         if (raw != null) {
-            String s = new BigInteger(1, raw).toString();
-            if ((s.length() & 1) == 1) {
-                out.writeCharacters("0");
-            }
-            out.writeCharacters(s);
+            out.writeCharacters(toString(raw));
         }
         out.writeEndElement();
     }

@@ -3,6 +3,7 @@ package com.github.jpeg2000;
 import java.io.*;
 import jj2000.j2k.io.*;
 import java.awt.image.ColorModel;
+import javax.xml.stream.*;
 
 
 /**
@@ -121,6 +122,18 @@ public class ChannelDefinitionBox extends Box {
      */
     public short[] getAssociation() {
         return associations;
+    }
+
+    @Override public void write(XMLStreamWriter out) throws XMLStreamException {
+        out.writeStartElement(toString(getType()).trim());
+        out.writeAttribute("length", Integer.toString(getLength()));
+        for (int i=0;i<channels.length;i++) {
+            out.writeEmptyElement("cmap");
+            out.writeAttribute("channel", Integer.toString(channels[i]));
+            out.writeAttribute("type", Integer.toString(types[i]));
+            out.writeAttribute("assoc", Integer.toString(associations[i]));
+        }
+        out.writeEndElement();
     }
 
 }

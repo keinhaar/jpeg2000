@@ -18,7 +18,7 @@ import javax.xml.stream.*;
 
 class TestWriter {
     public static void main(String[] args) throws Exception {
-        J2KCreator c = new J2KCreator();
+        J2KWriter c = new J2KWriter();
         c.setLossless(true);
         c.setSource(ImageIO.read(new File(args[0])), 256);
         OutputStream out = new BufferedOutputStream(new FileOutputStream("out.jp2"));

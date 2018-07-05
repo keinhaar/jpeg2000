@@ -2,6 +2,7 @@ package com.github.jpeg2000;
 
 import java.io.*;
 import jj2000.j2k.io.*;
+import javax.xml.stream.*;
 
 /** 
  *  This class is defined to represent a Color Specification Box of JPEG JP2
@@ -68,4 +69,15 @@ public class ComponentMappingBox extends Box {
         return map;
     }
 
+    @Override public void write(XMLStreamWriter out) throws XMLStreamException {
+        out.writeStartElement(toString(getType()).trim());
+        out.writeAttribute("length", Integer.toString(getLength()));
+        for (int i=0;i<components.length;i++) {
+            out.writeEmptyElement("cmap");
+            out.writeAttribute("component", Integer.toString(components[i]));
+            out.writeAttribute("type", Integer.toString(type[i]));
+            out.writeAttribute("assoc", Integer.toString(map[i]));
+        }
+        out.writeEndElement();
+    }
 }

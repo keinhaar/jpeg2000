@@ -4,7 +4,7 @@ import java.io.*;
 import java.awt.color.ColorSpace;
 
 public class TestReader {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         if (args.length == 0) {
             System.err.println("Usage: java -jar test.jar file.jpx [file.jpx...]");
             System.exit(0);
@@ -17,6 +17,9 @@ public class TestReader {
             File outfile = new File(s + ".pnm");
             RandomAccessIO in = new BEBufferedRandomAccessFile(infile, "r", 8192);
             final int[] enumcs = new int[1];
+            J2KFile file = new J2KFile().read(in);
+            file.write(javax.xml.stream.XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)).flush();
+
             J2KReader iin = new J2KReader(new J2KFile().read(in)) {
                 protected ColorSpace createColorSpace(int e) {
                     enumcs[0] = e;

@@ -2,6 +2,7 @@ package com.github.jpeg2000;
 
 import jj2000.j2k.io.RandomAccessIO;
 import java.io.*;
+import javax.xml.stream.*;
 
 /** This class is defined to represent a Bits Per Component Box of JPEG
  *  JP2 file format.  A Bits Per Component box has a length, and a fixed
@@ -43,5 +44,17 @@ public class BitsPerComponentBox extends Box {
     public byte[] getBitDepth() {
         return data;
     }
+
+    @Override public void write(XMLStreamWriter out) throws XMLStreamException {
+        out.writeStartElement(toString(getType()).trim());
+        out.writeAttribute("length", Integer.toString(getLength()));
+        for (int i=0;i<data.length;i++) {
+            out.writeStartElement("bpc");
+            out.writeCharacters(Integer.toString(data[i]&0xFF));
+            out.writeEndElement();
+        }
+        out.writeEndElement();
+    }
+
 
 }

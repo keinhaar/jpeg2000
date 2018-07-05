@@ -2,6 +2,7 @@ package com.github.jpeg2000;
 
 import java.io.*;
 import jj2000.j2k.io.*;
+import javax.xml.stream.*;
 
 /** This class is defined to represent a XML box of JPEG JP2
  *  file format.  This type of box has a length, a type of "xml ".  Its
@@ -56,4 +57,8 @@ public class CodeStreamBox extends Box {
         throw new IllegalStateException("Not created from a RandomAccessIO");
     }
 
+    @Override public void write(XMLStreamWriter out) throws XMLStreamException {
+        out.writeEmptyElement(toString(getType()).trim());
+        out.writeAttribute("length", Integer.toString(getLength()));
+    }
 }

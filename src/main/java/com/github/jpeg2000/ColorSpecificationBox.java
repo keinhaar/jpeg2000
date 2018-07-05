@@ -3,6 +3,7 @@ package com.github.jpeg2000;
 import java.io.*;
 import jj2000.j2k.io.*;
 import java.awt.color.*;
+import javax.xml.stream.*;
 
 /** This class is defined to represent a Color Specification Box of JPEG JP2
  *  file format.  A Channel Definition Box has a length, and a fixed type
@@ -120,6 +121,24 @@ public class ColorSpecificationBox extends Box {
         } else if (profile != null) {
             out.write(profile.getData());
         }
+    }
+
+    @Override public void write(XMLStreamWriter out) throws XMLStreamException {
+        out.writeStartElement(toString(getType()).trim());
+        out.writeAttribute("length", Integer.toString(getLength()));
+        out.writeAttribute("method", Integer.toString(getMethod()));
+        out.writeAttribute("precedence", Integer.toString(getPrecedence()));
+        out.writeAttribute("approximation", Integer.toString(getApproximationAccuracy()));
+        if (getMethod() == 1) {
+            out.writeStartElement("enumcs");
+            out.writeCharacters(Integer.toString(getEnumeratedColorSpace()));
+            out.writeEndElement();
+        } else if (getICCProfile() != null) {
+            out.writeStartElement("profile");
+            out.writeCharacters(toString(profile.getData()));
+            out.writeEndElement();
+        }
+        out.writeEndElement();
     }
 
 }

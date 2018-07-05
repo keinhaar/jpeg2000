@@ -3,6 +3,7 @@ package com.github.jpeg2000;
 import java.io.*;
 import jj2000.j2k.io.*;
 import java.awt.image.IndexColorModel;
+import javax.xml.stream.*;
 
 /** This class is designed to represent a palette box for JPEG 2000 JP2 file
  *  format.  A palette box has a length, and a fixed type of "pclr".

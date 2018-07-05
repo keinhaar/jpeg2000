@@ -2,6 +2,7 @@ package com.github.jpeg2000;
 
 import java.io.*;
 import jj2000.j2k.io.*;
+import javax.xml.stream.*;
 
 /** This class is defined to represent a Data Entry URL Box of JPEG JP2
  *  file format.  A Data Entry URL Box has a length, and a fixed type
@@ -11,8 +12,8 @@ import jj2000.j2k.io.*;
 public class URLBox extends Box {
 
     /** The element values. */
-    private byte version;
-    private byte[] flags;
+    private int version;
+    private int flags;
     private String url;
 
     public URLBox() {
@@ -20,7 +21,7 @@ public class URLBox extends Box {
     }
 
     /** Constructs a <code>DataEntryURLBox</code> from its data elements. */
-    public URLBox(byte version, byte[] flags, String url) {
+    public URLBox(int version, int flags, String url) {
         this();
         this.version = version;
         this.flags = flags;
@@ -32,11 +33,8 @@ public class URLBox extends Box {
     }
 
     @Override public void read(RandomAccessIO in) throws IOException {
-        version = in.readByte();
-        flags = new byte[3];
-        flags[0] = in.readByte();
-        flags[1] = in.readByte();
-        flags[2] = in.readByte();
+        version = in.read();
+        flags = (in.read()<<16) | (in.read()<<8) | in.read();
 
         byte[] b = new byte[in.length() - in.getPos()];
         in.readFully(b, 0, b.length);
@@ -45,19 +43,19 @@ public class URLBox extends Box {
 
     @Override public void write(DataOutputStream out) throws IOException {
         out.write(version);
-        out.write(flags[0]);
-        out.write(flags[1]);
-        out.write(flags[2]);
+        out.write(flags>>16);
+        out.write(flags>>8);
+        out.write(flags);
         out.write(url.getBytes("ISO-8859-1"));
     }
 
     /** Returns the <code>Version</code> data element. */
-    public byte getVersion() {
+    public int getVersion() {
         return version;
     }
 
     /** Returns the <code>Flags</code> data element. */
-    public byte[] getFlags() {
+    public int getFlags() {
         return flags;
     }
 
@@ -66,4 +64,12 @@ public class URLBox extends Box {
         return url;
     }
 
+    @Override public void write(XMLStreamWriter out) throws XMLStreamException {
+        out.writeStartElement(toString(getType()).trim());
+        out.writeAttribute("length", Integer.toString(getLength()));
+        out.writeAttribute("version", Integer.toString(getVersion()));
+        out.writeAttribute("flags", "0x"+Integer.toHexString(getFlags()));
+        out.writeCharacters(getURL());
+        out.writeEndElement();
+    }
 }

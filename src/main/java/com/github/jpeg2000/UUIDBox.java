@@ -2,6 +2,7 @@ package com.github.jpeg2000;
 
 import java.io.*;
 import jj2000.j2k.io.*;
+import javax.xml.stream.*;
 
 /** This class is defined to represent a UUID Box of JPEG JP2
  *  file format.  This type of box has a length, a type of "uuid".  Its
@@ -46,4 +47,11 @@ public class UUIDBox extends Box {
         return udata;
     }
 
+    @Override public void write(XMLStreamWriter out) throws XMLStreamException {
+        out.writeStartElement(toString(getType()).trim());
+        out.writeAttribute("length", Integer.toString(getLength()));
+        out.writeAttribute("uuid", toString(uuid));
+        out.writeCharacters(toString(udata));
+        out.writeEndElement();
+    }
 }

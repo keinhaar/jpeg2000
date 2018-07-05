@@ -2,6 +2,7 @@ package com.github.jpeg2000;
 
 import java.io.*;
 import jj2000.j2k.io.*;
+import javax.xml.stream.*;
 
 /** This class is defined to represent a XML box of JPEG JP2
  *  file format.  This type of box has a length, a type of "xml ".  Its

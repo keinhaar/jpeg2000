@@ -19,7 +19,7 @@ import jj2000.j2k.wavelet.analysis.*;
 import jj2000.j2k.*;
 import jj2000.j2k.io.*;
 
-public class J2KCreator implements MsgLogger {
+public class J2KWriter implements MsgLogger {
 
     private ColorSpecificationBox colr;
     private PaletteBox pclr;
@@ -27,7 +27,7 @@ public class J2KCreator implements MsgLogger {
     private boolean lossless;
     private BlkImgDataSrc src;
 
-    public J2KCreator() {
+    public J2KWriter() {
     }
 
     public void flush() {
@@ -136,10 +136,19 @@ public class J2KCreator implements MsgLogger {
         }
     }
 
+    /**
+     * Create and return a {@link J2KFile} which has the compressed image data
+     */
     public J2KFile create() throws IOException {
         return doCreate(null);
     }
 
+    /**
+     * Create and write a {@link J2KFile} to the specified OutputStream. This
+     * method does not need any intermediate buffers and can write the compressed
+     * image straight to the OutputStream, unlike {@link #create} which has to
+     * store the image in memory.
+     */
     public void write(OutputStream out) throws IOException {
         doCreate(out);
     }
