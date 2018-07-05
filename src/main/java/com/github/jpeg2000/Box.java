@@ -99,7 +99,7 @@ public class Box {
           boxClasses.put(Integer.valueOf(fromString("pclr")), PaletteBox.class);
           boxClasses.put(Integer.valueOf(fromString("cmap")), ComponentMappingBox.class);
           boxClasses.put(Integer.valueOf(fromString("cdef")), ChannelDefinitionBox.class);
-          boxClasses.put(Integer.valueOf(fromString("res ")), ResolutionBox.class);
+          boxClasses.put(Integer.valueOf(fromString("res ")), ResolutionSuperBox.class);
             boxClasses.put(Integer.valueOf(fromString("resc")), RescBox.class);
             boxClasses.put(Integer.valueOf(fromString("resd")), ResdBox.class);
         boxClasses.put(Integer.valueOf(fromString("jp2c")), CodeStreamBox.class);
