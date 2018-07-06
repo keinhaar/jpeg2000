@@ -1,7 +1,7 @@
 jpeg2000
 ====================
 
-This is another version of the "JJ2000" package, which provides an API for reading and writing JPEG-2000 encoded image data in Java. It is based on the "JAI" branch of the code, but with the JAI dependencies removed so it can be compiled as a standalone package again.
+This is another version of the "JJ2000" package, which provides an API for reading and writing JPEG-2000 encoded image data in Java. It is based on the "JAI" branch of the code, but with the JAI dependencies removed so it can be compiled as a standalone package again. The box model has been drastically simplified replacing the very heavy one dating from the JAI code, and simpler classes for reading/writing JPX images have been introduced, that focus on reading/writing to InputStream and OutputStream wherever possible rather than to a File or IIOImage.
 
 How to build
 ------------
@@ -10,7 +10,7 @@ Download and run "ant". The jar "target/jj2000.jar" contains the API code, the "
 How to read a JP2 or JPX image
 ------------------------------
 This will create a PNM from a grayscale or RGB image.
-```
+```java
 import java.io.*;
 import com.github.jpeg2000.*;
 import jj2000.j2k.io.*;
@@ -33,7 +33,7 @@ out.close();
 How to write a JP2 file
 ------------------------------
 This will create a JP2 from a grayscale or RGB image.
-```
+```java
 import java.io.*;
 import com.github.jpeg2000.*;
 import jj2000.j2k.io.*;
