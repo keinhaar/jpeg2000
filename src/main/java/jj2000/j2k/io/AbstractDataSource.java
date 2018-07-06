@@ -97,18 +97,18 @@ public abstract class AbstractDataSource implements BlkImgDataSrc {
         if (blk.getDataType() != DataBlk.TYPE_INT) {
             blk = new DataBlkInt(blk.ulx, blk.uly, blk.w, blk.h);
         }
-//            System.out.println("Here: tx="+tx+"x"+ty+" c="+c+" blkxy="+blk.ulx+"x"+blk.uly+" blkwh="+blk.w+"x"+blk.h);
         DataBlkInt blki = (DataBlkInt)blk;
         if (blki.data == null || blki.data.length != blk.w * blk.h) {
             blki.data = new int[blk.w * blk.h];
         }
-        int tx0 = tx * nomth;
-        int ty0 = ty * nomtw;
+        int tx0 = tx * nomtw;
+        int ty0 = ty * nomth;
+//        System.out.println("Here: tx="+tx+"x"+ty+" tw="+tw+"x"+th+" c="+c+" blkxy="+blk.ulx+"x"+blk.uly+" blkwh="+blk.w+"x"+blk.h+" sl="+scanline+" tt="+tx0+"x"+ty0);
 //        System.out.println("T: offset="+offset+" txy="+tx0+"x"+ty0+" bxy="+blk.ulx+"x"+blk.uly);
         for (int y=0;y<blk.h;y++) {
             int i = offset + (blk.uly - ty0)*scanline + (blk.ulx - tx0)*numc + c;
             int o = blki.offset + y*tw;
-            for (int x=0;x<tw;x++) {
+            for (int x=0;x<blk.w;x++) {
                 blki.data[o] = (buf[i] & 0xFF) - 128;
                 i += numc;
                 o++;
