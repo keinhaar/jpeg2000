@@ -43,7 +43,6 @@ J2KWriter writer = new J2KWriter();
 writer.setCompressionRatio(8, false);
 writer.setSource(image, 256);
 writer.write(new FileOutputStream("out.jp2"));
-J2KFile file = new J2KFile();
 ```
 
 License
