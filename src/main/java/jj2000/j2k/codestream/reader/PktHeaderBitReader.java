@@ -119,21 +119,17 @@ class PktHeaderBitReader {
     final int readBit() throws IOException {
         if (bpos == 0) { // Is bit buffer empty?
             if (bbuf != 0xFF) { // No bit stuffing
-                if(usebais)
-                    bbuf = bais.read();
-                else
-                    bbuf = in.read();
+                bbuf = usebais ? bais.read() : in.read();
                 bpos = 8;
                 if (bbuf == 0xFF) { // If new bit stuffing get next byte
-                    if(usebais)
-                        nextbbuf = bais.read();
-                    else
-                        nextbbuf = in.read();
+                    nextbbuf = usebais ? bais.read() : in.read();
                 }
-            }
-            else { // We had bit stuffing, nextbuf can not be 0xFF
+            } else { // We had bit stuffing, nextbuf can not be 0xFF
                 bbuf = nextbbuf;
                 bpos = 7;
+            }
+            if (bbuf < 0) {
+                throw new EOFException();
             }
         }
         return (bbuf >> --bpos) & 0x01;
@@ -158,8 +154,7 @@ class PktHeaderBitReader {
         // Can we get all bits from the bit buffer?
         if (n <= bpos) {
             return (bbuf >> (bpos-=n)) & ((1<<n)-1);
-        }
-        else {
+        } else {
             // NOTE: The implementation need not be recursive but the not
             // recursive one exploits a bug in the IBM x86 JIT and caused
             // incorrect decoding (Diego Santa Cruz).
@@ -171,22 +166,17 @@ class PktHeaderBitReader {
                 bits |= readBits(bpos);
                 // Get an extra bit to load next byte (here bpos is 0)
                 if (bbuf != 0xFF) { // No bit stuffing
-                    if(usebais)
-                        bbuf = bais.read();
-                    else
-                        bbuf = in.read();
-
+                    bbuf = usebais ? bais.read() : in.read();
                     bpos = 8;
                     if (bbuf == 0xFF) { // If new bit stuffing get next byte
-                        if(usebais)
-                            nextbbuf = bais.read();
-                        else
-                            nextbbuf = in.read();
+                        nextbbuf = usebais ? bais.read() : in.read();
                     }
-                }
-                else { // We had bit stuffing, nextbuf can not be 0xFF
+                } else { // We had bit stuffing, nextbuf can not be 0xFF
                     bbuf = nextbbuf;
                     bpos = 7;
+                }
+                if (bbuf < 0) {
+                    throw new EOFException();
                 }
             } while (n > bpos);
             // Get the last bits, if any
