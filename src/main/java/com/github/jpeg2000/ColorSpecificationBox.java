@@ -24,7 +24,8 @@ public class ColorSpecificationBox extends Box {
     private byte precedence;
     private byte approximation;
     private int ecs;
-    private ICC_Profile profile;
+    private volatile byte[] profileData;
+    private volatile ICC_Profile profile;
 
     public ColorSpecificationBox() {
         super(fromString("colr"));
@@ -91,13 +92,40 @@ public class ColorSpecificationBox extends Box {
         return ecs;
     }
 
-    /** Returns the ICC color profile in this color specification box. */
+    /**
+     * Returns the ICC color profile in this color specification box,
+     * or null none exists.
+     */
     public ICC_Profile getICCProfile() {
+        if (profile == null && profileData != null) {
+            synchronized(this) {
+                if (profile == null && profileData != null) {
+                    profile = ICC_Profile.getInstance(profileData);
+                }
+            }
+        }
         return profile;
     }
 
+    /**
+     * Returns the raw bytes of the ICC color profile in this color
+     * specification box, or null if none exists..
+     */
+    public byte[] getICCProfileData() {
+        // Reason for this method is to allows access to the ICC profile
+        // data without instantiation of the ICC_Profile object.
+        if (profileData == null && profile != null) {
+            synchronized(this) {
+                if (profileData == null && profile != null) {
+                    profileData = profile.getData();
+                }
+            }
+        }
+        return profileData;
+    }
+
     @Override public int getLength() {
-        return 3 + (method == 1 ? 4 : profile.getData().length);
+        return 3 + (method == 1 ? 4 : getICCProfileData().length);
     }
 
     @Override public void read(RandomAccessIO in) throws IOException {
@@ -105,9 +133,8 @@ public class ColorSpecificationBox extends Box {
         precedence = in.readByte();
         approximation = in.readByte();
         if (method == 2 || method == 3) {
-            byte[] proData = new byte[in.length() - in.getPos()];
-            in.readFully(proData, 0, proData.length);
-            profile = ICC_Profile.getInstance(proData);
+            profileData = new byte[in.length() - in.getPos()];
+            in.readFully(profileData, 0, profileData.length);
         } else {
             ecs = in.readInt();
         }
@@ -119,8 +146,8 @@ public class ColorSpecificationBox extends Box {
         out.write(approximation);
         if (method == 1) {
             out.writeInt(ecs);
-        } else if (profile != null) {
-            out.write(profile.getData());
+        } else if (getICCProfileData() != null) {
+            out.write(getICCProfileData());
         }
     }
 
@@ -136,7 +163,7 @@ public class ColorSpecificationBox extends Box {
             out.writeEndElement();
         } else if (getICCProfile() != null) {
             out.writeStartElement("profile");
-            out.writeCharacters(toString(profile.getData()));
+            out.writeCharacters(toString(getICCProfileData()));
             out.writeEndElement();
         }
         out.writeEndElement();
