@@ -154,15 +154,11 @@ public class J2KReader extends InputStream implements MsgLogger {
             }
         } else if (box instanceof ColorSpecificationBox) {
             ColorSpecificationBox b = (ColorSpecificationBox) box;
-            switch (b.getMethod()) {
-                case 1: // enumerated
-                    cs = createColorSpace(b.getEnumeratedColorSpace());
-                    break;
-                case 2: // icc_profiled
-                case 3: // restricted ICC
-                    cs = new ICC_ColorSpace(b.getICCProfile());
-                    break;
-                default:
+            int method = b.getMethod();
+            if (method == 1) {
+                cs = createColorSpace(b.getEnumeratedColorSpace(), null);
+            } else if (method == 2 || method == 3) {
+                cs = createColorSpace(0, b.getICCProfileData());
             }
         } else if (box instanceof ChannelDefinitionBox) {
             ChannelDefinitionBox b = (ChannelDefinitionBox)box;
@@ -445,16 +441,21 @@ public class J2KReader extends InputStream implements MsgLogger {
     }
 
     /** 
-     * Convert the enumerated colorspace valuel to a {@link ColorSpace}.
+     * Convert the enumerated colorspace or ICC profile data to a {@link ColorSpace}.
      * This method could be overriden by subclasses to increase the number
      * of supported ColorSpaces.
-     * @param e the enumerated colorspace value, eg 16 for sRGB.
+     * @param e the enumerated colorspace value, eg 16 for sRGB, or 0 if an ICC profile is specified.
+     * @param iccprofile the raw data of the ICC profile of specified, or null if an enumerated colorspace is used.
      * @return the ColorSpace, or null if it is unsupported.
      */
-    protected  ColorSpace createColorSpace(int e) {
-        switch(e) {
-            case 16: return ColorSpace.getInstance(ColorSpace.CS_sRGB);
-            case 17: return ColorSpace.getInstance(ColorSpace.CS_GRAY);
+    protected  ColorSpace createColorSpace(int e, byte[] iccprofile) {
+        if (iccprofile != null) {
+            return new ICC_ColorSpace(ICC_Profile.getInstance(iccprofile));
+        } else {
+            switch(e) {
+                case 16: return ColorSpace.getInstance(ColorSpace.CS_sRGB);
+                case 17: return ColorSpace.getInstance(ColorSpace.CS_GRAY);
+            }
         }
         return null;
     }
