@@ -47,7 +47,7 @@ writer.write(new FileOutputStream("out.jp2"));
 
 License
 --------------------
-The JJ2000 portion of the code is covered under the  [JJ2000](LICENSE-JJ2000.txt) license. The JAI portions of the code have mostly been removed, although some constributions to the main body and they are covered under a modified [BSD](LICENSE-Sun.txt) license. The BFO contributions are licensed under the same modified BSD license.
+The JJ2000 portion of the code is covered under the  [JJ2000](LICENSE-JJ2000.txt) license. The JAI portions of the code have mostly been removed, although some contributions to the main body of the API may remain: they are covered under a modified [BSD](LICENSE-Sun.txt) license. The BFO contributions (mainly in `com.github.jpeg2000`, but again with some contributions to the main body of the API) are licensed under the same modified BSD license.
 
 History (which may be wrong)
 ----------------------------
