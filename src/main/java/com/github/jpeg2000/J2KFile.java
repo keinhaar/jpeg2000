@@ -31,7 +31,7 @@ public class J2KFile {
         if (in.readInt() != 12 || in.readInt() != SIGMARKER>>32 || in.readInt() != (int)SIGMARKER) {
             throw new IOException("No JP2 Signature Box");
         }
-        while (in.length() - in.getPos() > 0) {
+        while (in.length() - in.getPos() >= 8) {        // 8 is minimum length for box
             add(ContainerBox.readBox(in));
         }
         return this;
