@@ -21,9 +21,10 @@ public class TestReader {
             file.write(javax.xml.stream.XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)).flush();
 
             J2KReader iin = new J2KReader(file) {
-                protected ColorSpace createColorSpace(int e) {
+                @Override
+                protected ColorSpace createColorSpace(int e, byte[] data) {
                     enumcs[0] = e;
-                    return super.createColorSpace(e);
+                    return super.createColorSpace(e, data);
                 }
             };
 
