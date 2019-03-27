@@ -41,7 +41,7 @@ public class J2KReader extends InputStream implements MsgLogger {
     private InverseWT invWT;
     private BitstreamReaderAgent breader;
     private int fulliw, fullih, numtx, numty, iw, ih, scanline, numc, fullscale, scale, ntw, nth;
-    private final int[] depth;
+    private int[] depth;
     private int[] channels;
 
     // variable
@@ -54,18 +54,28 @@ public class J2KReader extends InputStream implements MsgLogger {
     private ColorSpace cs;
 
     /**
-     * Create a new JsKReader
+     * Create a new J2KReader from a "jp2" file
      * @param file the J2KFile to read from
      */
     public J2KReader(J2KFile file) throws IOException {
         for (Box box : file.getHeaderBox().getBoxes()) {
             addBox(box);
         }
+        init(file.getCodeStreamBox().getRandomAccessIO());
+    }
 
+    /**
+     * Create a new J2KReader from a raw codestream.
+     * @param file the CodeStream to read from
+     */
+    public J2KReader(CodeStreamBox box) throws IOException {
+        init(box.getRandomAccessIO());
+    }
+
+    private void init(RandomAccessIO in) throws IOException {
+        this.in = in;
         registerThread = Thread.currentThread();
         FacilityManager.registerMsgLogger(registerThread, this);
-
-        in = file.getCodeStreamBox().getRandomAccessIO();
 
         HeaderInfo hi = new HeaderInfo();
         J2KReadParam param = new SimpleJ2KReadParam();
@@ -215,7 +225,7 @@ public class J2KReader extends InputStream implements MsgLogger {
                 final int itx = tx * ntw;
                 final int ity = 0;
                 for (int iz=0;iz<numc;iz++) {
-                    int riz = channels[iz];     // output channel, could differ from input channel
+                    int riz = channels == null ? iz : channels[iz];     // output channel, could differ from input channel
                     final int depth = src.getNomRangeBits(iz);
                     final int mid = 1 << (depth - 1);
                     final int csx = src.getCompSubsX(iz);
