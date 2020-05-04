@@ -133,4 +133,24 @@ public class ChannelDefinitionBox extends Box {
         out.writeEndElement();
     }
 
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString());
+        sb.deleteCharAt(sb.length() - 1);
+        sb.append(",\"channels\":[");
+        for (int i=0;i<channels.length;i++) {
+            if (i > 0) {
+                sb.append(",");
+            }
+            sb.append("{\"channel\":");
+            sb.append(channels[i]);
+            sb.append(",\"type\":");
+            sb.append(types[i]);
+            sb.append(",\"association\":");
+            sb.append(associations[i]);
+            sb.append("}"); 
+        }
+        sb.append("]}");
+        return sb.toString();
+    }
+
 }

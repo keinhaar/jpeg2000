@@ -74,9 +74,20 @@ public class ColorSpecificationBox extends Box {
     }
 
     public String toString() {
-        return "{colr: meth="+method+" prec="+precedence+" approx="+approximation+" ecs="+ecs+"}";
-
+        StringBuilder sb = new StringBuilder(super.toString());
+        sb.deleteCharAt(sb.length() - 1);
+        sb.append(",\"method\":");
+        sb.append(method);
+        sb.append(",\"precedence\":");
+        sb.append(precedence);
+        sb.append(",\"approximation\":");
+        sb.append(approximation);
+        sb.append(",\"ecs\":");
+        sb.append(ecs);
+        sb.append("}");
+        return sb.toString();
     }
+
     /** Returns <code>Precedence</code>. */
     public byte getPrecedence() {
         return precedence;

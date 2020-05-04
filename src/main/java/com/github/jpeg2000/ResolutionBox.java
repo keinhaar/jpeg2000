@@ -104,5 +104,27 @@ public class ResolutionBox extends Box {
         out.writeAttribute("vres", Float.toString(vRes));
     }
 
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString());
+        sb.deleteCharAt(sb.length() - 1);
+        sb.append(",\"nv\":");
+        sb.append(numV);
+        sb.append(",\"dv\":");
+        sb.append(denomV);
+        sb.append(",\"ev\":");
+        sb.append(expV);
+        sb.append(",\"nh\":");
+        sb.append(numH);
+        sb.append(",\"dh\":");
+        sb.append(denomH);
+        sb.append(",\"eh\":");
+        sb.append(expH);
+        sb.append(",\"hres\":");
+        sb.append(hRes);
+        sb.append(",\"vres\":");
+        sb.append(vRes);
+        sb.append("}");
+        return sb.toString();
+    }
 
 }

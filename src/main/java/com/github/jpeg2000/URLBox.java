@@ -74,4 +74,18 @@ public class URLBox extends Box {
         out.writeCharacters(getURL());
         out.writeEndElement();
     }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString());
+        sb.deleteCharAt(sb.length() - 1);
+        sb.append(",\"version\":");
+        sb.append(getVersion());
+        sb.append(",\"flags\":");
+        sb.append(getFlags());
+        sb.append(",\"url\":\"");
+        sb.append(getURL().replaceAll("\"", "\\\""));
+        sb.append("\"}");
+        return sb.toString();
+    }
+
 }

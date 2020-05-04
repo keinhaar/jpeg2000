@@ -124,4 +124,15 @@ public class UUIDBox extends Box {
         }
         out.writeEndElement();
     }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString());
+        sb.deleteCharAt(sb.length() - 1);
+        sb.append("\"uuid\":\"");
+        sb.append(getUUID());
+        sb.append("\",\"data\":");
+        sb.append(toString(getData()));
+        sb.append("\"}");
+        return sb.toString();
+    }
 }

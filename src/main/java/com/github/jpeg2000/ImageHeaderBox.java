@@ -115,4 +115,29 @@ public class ImageHeaderBox extends Box {
         out.writeAttribute("unknownColorSpace", Integer.toString(getUnknownColorspace()));
         out.writeAttribute("ip", Integer.toString(getIntellectualProperty()));
     }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString());
+        sb.deleteCharAt(sb.length() - 1);
+        sb.append(",\"width\":\"");
+        sb.append(getWidth());
+        sb.append(",\"height\":\"");
+        sb.append(getHeight());
+        sb.append(",\"numc\":\"");
+        sb.append(getNumComponents());
+        if (getBitDepth() != 255) {
+            sb.append(",\"depth\":\"");
+            sb.append(getBitDepth());
+        }
+        if (getCompressionType() != 7) {
+            sb.append(",\"compression\":\"");
+            sb.append(getCompressionType());
+        }
+        sb.append("\",\"unknownColorSpace\":");
+        sb.append(getUnknownColorspace());
+        sb.append("\",\"ip\":");
+        sb.append(getIntellectualProperty());
+        sb.append("}");
+        return sb.toString();
+    }
 }

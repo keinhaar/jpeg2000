@@ -80,4 +80,25 @@ public class ComponentMappingBox extends Box {
         }
         out.writeEndElement();
     }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString());
+        sb.deleteCharAt(sb.length() - 1);
+        sb.append(",\"components\":[");
+        for (int i=0;i<components.length;i++) {
+            if (i > 0) {
+                sb.append(",");
+            }
+            sb.append("{\"component\":");
+            sb.append(components[i]);
+            sb.append(",\"type\":");
+            sb.append(type[i]);
+            sb.append(",\"association\":");
+            sb.append(map[i]);
+            sb.append("}");
+        }
+        sb.append("]}");
+        return sb.toString();
+    }
+
 }

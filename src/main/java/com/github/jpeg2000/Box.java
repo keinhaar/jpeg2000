@@ -144,4 +144,14 @@ public class Box {
         out.writeEndElement();
     }
 
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("{\"type\":\"");
+        sb.append(toString(type));
+        sb.append("\",\"length\":");
+        sb.append(getLength());
+        sb.append("}");
+        return sb.toString();
+    }
+
 }

@@ -79,7 +79,7 @@ public class FileTypeBox extends Box {
         out.writeStartElement(toString(getType()).trim());
         out.writeAttribute("length", Integer.toString(getLength()));
         out.writeAttribute("brand", toString(brand));
-        out.writeAttribute("minorVersion", "0x" + Integer.toHexString(brand));
+        out.writeAttribute("minorVersion", "0x" + Integer.toHexString(minorVersion));
         for (int i=0;i<compat.length;i++) {
             out.writeStartElement("compat");
             out.writeCharacters(toString(compat[i]));
@@ -87,6 +87,27 @@ public class FileTypeBox extends Box {
         }
         out.writeEndElement();
     }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString());
+        sb.deleteCharAt(sb.length() - 1);
+        sb.append(",\"brand\":\"");
+        sb.append(toString(brand));
+        sb.append("\",\"minorVersion\":");
+        sb.append(minorVersion);
+        sb.append("\",\"compat\":[");
+        for (int i=0;i<compat.length;i++) {
+            if (i > 0) {
+                sb.append(",");
+            }
+            sb.append("\"");
+            sb.append(toString(compat[i]));
+            sb.append("\"");
+        }
+        sb.append("]}");
+        return sb.toString();
+    }
+
 
 
 }

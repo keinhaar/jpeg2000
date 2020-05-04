@@ -136,4 +136,26 @@ public class PaletteBox extends Box {
             }
         }
     }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString());
+        sb.deleteCharAt(sb.length() - 1);
+        sb.append(",\"depth\":[");
+        for (int i=0;i<numc;i++) {
+            if (i > 0) {
+                sb.append(",");
+            }
+            sb.append(bitDepth[i]);
+        }
+        sb.append("],\"lut\":[");
+        for (int i=0;i<lut.length;i++) {
+            if (i > 0) {
+                sb.append(",");
+            }
+            sb.append(lut[i]);
+        }
+        sb.append("]}");
+        return sb.toString();
+    }
+
 }
