@@ -30,6 +30,7 @@ public class J2KWriter implements MsgLogger {
 
     private ColorSpecificationBox colr;
     private PaletteBox pclr;
+    private ResolutionBox resc, resd;
     private J2KWriteParam param;
     private float ratio;
     private boolean reversible;
@@ -89,6 +90,24 @@ public class J2KWriter implements MsgLogger {
     }
 
     /**
+     * Set the "capture" resolution that is written out.
+     * @param horiz the horizontal resolution in dots-per-meter, or 0 for no box
+     * @param vertical the horizontal resolution in dots-per-meter, or 0 for no box
+     */
+    public void setCaptureResolution(double horiz, double vertical) {
+        resc = horiz > 0 && vertical > 0 ? new ResolutionBox(Box.fromString("resc"), (float)horiz, (float)vertical) : null;
+    }
+
+    /**
+     * Set the "diisplay" resolution that is written out.
+     * @param horiz the horizontal resolution in dots-per-meter, or 0 for no box
+     * @param vertical the horizontal resolution in dots-per-meter, or 0 for no box
+     */
+    public void setDisplayResolution(double horiz, double vertical) {
+        resd = horiz > 0 && vertical > 0 ? new ResolutionBox(Box.fromString("resd"), (float)horiz, (float)vertical) : null;
+    }
+
+    /**
      * Set the Source for the image. Any BlkImgDataSrc may be used, but
      * a {@link AbstractDataSource} would be the easiest
      */
@@ -105,6 +124,7 @@ public class J2KWriter implements MsgLogger {
         setSource(AbstractDataSource.newInstance(img, tilesize));
         ColorModel cm = img.getColorModel();
         if (cm instanceof IndexColorModel) {
+            throw new UnsupportedOperationException("No indexed yet");
             // TODO
         } else {
             setColorSpace(cm.getColorSpace());
@@ -144,6 +164,16 @@ public class J2KWriter implements MsgLogger {
         }
         if (pclr != null) {
             jp2h.add(pclr);
+        }
+        if (resc != null || resd != null) {
+            ResolutionSuperBox res = new ResolutionSuperBox();
+            if (resc != null) {
+                res.add(resc);
+            }
+            if (resd != null) {
+                res.add(resd);
+            }
+            jp2h.add(res);
         }
         if (bpc == 255) {
             byte[] b = new byte[src.getNumComps()];

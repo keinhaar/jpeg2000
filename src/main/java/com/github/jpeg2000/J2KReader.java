@@ -2,6 +2,7 @@ package com.github.jpeg2000;
 
 import java.io.*;
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.awt.color.*;
 
 import jj2000.j2k.decoder.DecoderSpecs;
@@ -52,6 +53,7 @@ public class J2KReader extends InputStream implements MsgLogger {
     private boolean seenapprox;
     private int[][] palette;
     private ColorSpace cs;
+    private ResolutionBox resc, resd;
 
     /**
      * Create a new J2KReader from a "jp2" file
@@ -176,6 +178,12 @@ public class J2KReader extends InputStream implements MsgLogger {
             short[] a = b.getAssociation();
             for (int i=0;i<c.length;i++) {
                 channels[c[i]] = a[i] - 1;
+            }
+        } else if (box instanceof ResolutionBox) {
+            if (Box.toString(box.getType()).equals("resc")) {
+                resc = (ResolutionBox)box;
+            } else if (Box.toString(box.getType()).equals("resd")) {
+                resd = (ResolutionBox)box;
             }
         }
     }
@@ -435,6 +443,26 @@ public class J2KReader extends InputStream implements MsgLogger {
      */
     public int getIndexSize() {
         return palette != null ? palette.length : -1;
+    }
+
+    /**
+     * Return the "capture" resolution specified in the file in dots-per-meter,
+     * with the horizontal and vertical resolution stored as the X and Y
+     * values of the returned point. If no resolution is specified,
+     * return null
+     */
+    public Point2D getCaptureResolution() {
+        return resc == null ? null : new Point2D.Double(resc.getHorizontalResolution(), resc.getVerticalResolution());
+    }
+
+    /**
+     * Return the "display" resolution specified in the file in dots-per-meter,
+     * with the horizontal and vertical resolution stored as the X and Y
+     * values of the returned point. If no resolution is specified,
+     * return null
+     */
+    public Point2D getDisplayResolution() {
+        return resd == null ? null : new Point2D.Double(resd.getHorizontalResolution(), resd.getVerticalResolution());
     }
 
     /**
