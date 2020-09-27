@@ -30,6 +30,22 @@ while ((c=iin.read()) >= 0) {
 }
 out.close();
 ```
+and this will save the file as a PNG
+```java
+import java.io.*;
+import com.github.jpeg2000.*;
+import jj2000.j2k.io.*;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+
+J2KFile file = new J2KFile();
+file.read(new BEBufferedRandomAccessFile(infile, "r", 8192));
+J2KReader iin = new J2KReader(file);
+BufferedImage image = iin.getBufferedImage();
+ImageIO.write(image, "PNG", new File("out.png"));
+```
+This second example presume the JP2 file is grayscale, RGB, indexed-RGB or has an embedded ICC profile. CMYK, Lab and other spaces need a `java.awt.ColorSpace` implementation - you can override the `J2KReader.createColorSpace` to supply one of these if you have an implementation.
+
 How to write a JP2 file
 ------------------------------
 This will create a JP2 from a grayscale or RGB image.
@@ -37,6 +53,7 @@ This will create a JP2 from a grayscale or RGB image.
 import java.io.*;
 import com.github.jpeg2000.*;
 import jj2000.j2k.io.*;
+
 
 BufferedImage image = ...
 J2KWriter writer = new J2KWriter();
