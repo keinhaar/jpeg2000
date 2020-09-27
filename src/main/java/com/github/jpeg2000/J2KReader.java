@@ -4,6 +4,7 @@ import java.io.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.color.*;
+import java.awt.image.*;
 
 import jj2000.j2k.decoder.DecoderSpecs;
 import jj2000.j2k.quantization.dequantizer.Dequantizer;
@@ -53,6 +54,7 @@ public class J2KReader extends InputStream implements MsgLogger {
     private boolean seenapprox;
     private int[][] palette;
     private ColorSpace cs;
+    private int cstype;
     private ResolutionBox resc, resd;
 
     /**
@@ -493,6 +495,7 @@ public class J2KReader extends InputStream implements MsgLogger {
             switch(e) {
                 case 16: return ColorSpace.getInstance(ColorSpace.CS_sRGB);
                 case 17: return ColorSpace.getInstance(ColorSpace.CS_GRAY);
+                default: cstype = e;
             }
         }
         return null;
@@ -511,6 +514,50 @@ public class J2KReader extends InputStream implements MsgLogger {
      * Called when a row of tiles is loaded. For benchmarking, the default is a no-op
      */
     protected void rowCallback() throws IOException {
+    }
+
+    /**
+     * Read the content of this J2KReader and return it as a BufferedImage object
+     * The ColorSpace must be supported by Java, which means - without extensions
+     * to this API - only RGB, GrayScale and indexed-RGB are supported.
+     * The InputStream this obejct represents will be read fully and closed.
+     * @throws IOException if an IOException is encountered during read
+     * @throws IllegalStateExeption if the ColorSpace specified by this file is unsupported.
+     */
+    public BufferedImage getBufferedImage() throws IOException {
+        int width = getWidth();
+        int height = getHeight();
+        ColorSpace colorSpace = getColorSpace();
+        if (colorSpace == null) {
+            throw new IllegalStateException("Can't create image: unsupported ColorSpace type " + cstype);
+        }
+        int bpc = getBitsPerComponent();
+        int numc = getNumComponents();
+        ColorModel colorModel;
+
+        if (isIndexed() && colorSpace.isCS_sRGB()) {
+            // IndexColorModel is always sRGB in Java.
+            int indexSize = getIndexSize();
+            byte[] palette = new byte[3 * indexSize];
+            for (int i=0;i<indexSize;i++) {
+                palette[i*3] = (byte)getIndexComponent(i, 0);
+                palette[i*3 + 1] = (byte)getIndexComponent(i, 1);
+                palette[i*3 + 2] = (byte)getIndexComponent(i, 2);
+            }
+            colorModel = new IndexColorModel(bpc, indexSize, palette, 0, false);
+        } else {
+            colorModel = new ComponentColorModel(colorSpace, false, false, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
+        }
+        SampleModel sampleModel = colorModel.createCompatibleSampleModel(width, height);
+        DataBufferByte buffer = (DataBufferByte)sampleModel.createDataBuffer();
+        byte[] buf = buffer.getData();
+        int off = 0, l;
+        while (off < buf.length && (l=read(buf, off, buf.length - off)) >= 0) {
+            off += l;
+        }
+        close();
+        WritableRaster raster = Raster.createWritableRaster(sampleModel, buffer, null);
+        return new BufferedImage(colorModel, raster, false, null);
     }
 
 }

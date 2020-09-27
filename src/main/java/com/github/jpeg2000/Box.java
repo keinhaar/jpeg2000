@@ -76,7 +76,7 @@ public class Box {
     }
 
     public int getLength() {
-        return raw.length;
+        return raw == null ? 0 : raw.length;
     }
 
     public static Box createBox(int type) {
