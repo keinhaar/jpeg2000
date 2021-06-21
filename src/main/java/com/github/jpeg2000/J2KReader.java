@@ -342,6 +342,14 @@ public class J2KReader extends InputStream implements MsgLogger {
 
     public long skip(long len) throws IOException {
         long origlen = len;
+        if (buf == null && len > 0) {
+            // Ensure read buffer is initialized before we try and skip
+            int v = read();
+            if (v < 0) {
+                return 0;
+            }
+            len--;
+        }
         while (len > 0) {
             int avail = Math.min((int)len, length - pos);
             len -= avail;
