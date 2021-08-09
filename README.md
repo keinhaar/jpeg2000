@@ -16,7 +16,7 @@ import com.github.jpeg2000.*;
 import jj2000.j2k.io.*;
 
 File infile = new File("in.jp2");
-File outfie = new File("out.pnm");
+File outfile = new File("out.pnm");
 J2KFile file = new J2KFile();
 file.read(new BEBufferedRandomAccessFile(infile, "r", 8192));
 J2KReader iin = new J2KReader(file);
@@ -41,7 +41,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 
 File infile = new File("in.jp2");
-File outfie = new File("out.png");
+File outfile = new File("out.png");
 J2KFile file = new J2KFile();
 file.read(new BEBufferedRandomAccessFile(infile, "r", 8192));
 J2KReader iin = new J2KReader(file);
