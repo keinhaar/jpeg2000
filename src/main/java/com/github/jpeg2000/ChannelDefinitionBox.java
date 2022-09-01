@@ -12,6 +12,8 @@ import javax.xml.stream.*;
  * a fixed type of "cdef".  Its content defines the type of the image
  * channels: color channel, alpha channel or premultiplied alpha channel.
  *
+ * CORRECTION - it is actually "ComponentDefinitionBox" in the spec.
+ *
  * @author http://bfo.com
  */
 public class ChannelDefinitionBox extends Box {
@@ -79,6 +81,7 @@ public class ChannelDefinitionBox extends Box {
     }
 
     @Override public void read(RandomAccessIO in) throws IOException {
+        // Note all of these are actually unsigned shorts, so any images with > 16383 channels will fail...
         num = in.readShort();
         channels = new short[num];
         types = new short[num];
@@ -86,7 +89,7 @@ public class ChannelDefinitionBox extends Box {
 
         for (int i=0;i<num;i++) {
             channels[i] = in.readShort();
-            channels[i] = in.readShort();
+            types[i] = in.readShort();
             associations[i] = in.readShort();
         }
     }
@@ -104,18 +107,23 @@ public class ChannelDefinitionBox extends Box {
         }
     }
 
-    /** Returns the defined channels. */
+    /**
+     * Returns the defined channels.
+     */
     public short[] getChannel() {
         return channels;
     }
 
-    /** Returns the channel types. */
+    /**
+     * Returns the channel types. Values are 0 (color), 1 (opacity), 2 (premultiplied opacity) or -1 (unspecified)
+     */
     public short[] getTypes() {
         return types;
     }
 
-    /** Returns the association which associates a color channel to a color
-     *  component in the color space of the image.
+    /**
+     * Returns the association which associates a color channel to a color
+     * component in the color space of the image.
      */
     public short[] getAssociation() {
         return associations;

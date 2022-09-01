@@ -175,6 +175,7 @@ public class J2KReader extends InputStream implements MsgLogger {
                 cs = createColorSpace(0, b.getICCProfileData());
             }
         } else if (box instanceof ChannelDefinitionBox) {
+            // ComponentDefinitionBox
             ChannelDefinitionBox b = (ChannelDefinitionBox)box;
             short[] c = b.getChannel();
             short[] a = b.getAssociation();
@@ -236,12 +237,20 @@ public class J2KReader extends InputStream implements MsgLogger {
                 final int ity = 0;
                 for (int iz=0;iz<numc;iz++) {
                     int riz = channels == null ? iz : channels[iz];     // output channel, could differ from input channel
+                    if (riz < 0) {
+                        // This is the OPACITY channel. Well technically
+                        // it's something that applies to all channels, but
+                        // given the limitations of what we can do with that
+                        // we'll assume opacity, as that's the only example
+                        // seen to date.
+                        riz = numc - 1;
+                    }
                     final int depth = src.getNomRangeBits(iz);
                     final int mid = 1 << (depth - 1);
                     final int csx = src.getCompSubsX(iz);
                     final int csy = src.getCompSubsY(iz);
                     final int fb = src.getFixedPoint(iz);
-//                    System.out.println("iwh="+iw+"x"+ih+" txy="+tx+"x"+ty+" of "+numtx+","+numty+" itxy="+src.getTilePartULX()+"x"+src.getTilePartULY()+" tcwh="+tw+"x"+th+" twh="+src.getTileWidth()+"x"+src.getTileHeight()+" ntwh="+src.getNomTileWidth()+"x"+src.getNomTileHeight()+" iz="+iz+"="+riz+" ss="+csx+"x"+csy+" d="+depth+" mid="+mid+" fb="+fb+" sl="+scanline+" buf="+buf.length);
+                    // System.out.println("iwh="+iw+"x"+ih+" txy="+tx+"x"+ty+" of "+numtx+","+numty+" itxy="+src.getTilePartULX()+"x"+src.getTilePartULY()+" tcwh="+tw+"x"+th+" twh="+src.getTileWidth()+"x"+src.getTileHeight()+" ntwh="+src.getNomTileWidth()+"x"+src.getNomTileHeight()+" iz="+iz+"="+riz+" ss="+csx+"x"+csy+" d="+depth+" mid="+mid+" fb="+fb+" sl="+scanline+" buf="+buf.length+" channels="+java.util.Arrays.toString(channels));
                     int[] shift = null;
                     if (depth < 8) {
                         shift = new int[1<<depth];
@@ -554,7 +563,12 @@ public class J2KReader extends InputStream implements MsgLogger {
             }
             colorModel = new IndexColorModel(bpc, indexSize, palette, 0, false);
         } else {
-            colorModel = new ComponentColorModel(colorSpace, false, false, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
+            boolean opaque = getNumComponents() == colorSpace.getNumComponents();
+            if (opaque) {
+                colorModel = new ComponentColorModel(colorSpace, false, false, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
+            } else {
+                colorModel = new ComponentColorModel(colorSpace, true, false, Transparency.TRANSLUCENT, DataBuffer.TYPE_BYTE);
+            }
         }
         SampleModel sampleModel = colorModel.createCompatibleSampleModel(width, height);
         DataBufferByte buffer = (DataBufferByte)sampleModel.createDataBuffer();
