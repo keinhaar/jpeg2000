@@ -206,99 +206,101 @@ public class J2KReader extends InputStream implements MsgLogger {
     // InputStream methods
 
     private boolean nextRow(boolean skip) throws IOException {
-        rowCallback();
-//        System.out.println("IN: ty="+ty+"/"+numty+" numtx="+numtx+" numc="+numc+" skip="+skip+" pos="+pos+" length="+length);
-        if (ty == numty) {
-            return false;
-        }
-        if (!skip) {
-            for (int tx=0;tx<numtx;tx++) {
-                src.setTile(tx, ty);
-                final int tileix = src.getTileIdx();
-                // Determine tile width/height - this is not as simple as
-                // calling src.getTileWidth when using less than full res.
-                int tw = 0;
-                int th = 0;
-                for (int iz=0;iz<numc;iz++) {
-                    tw = Math.max(tw, src.getTileCompWidth(tileix, iz));
-                    th = Math.max(th, src.getTileCompHeight(tileix, iz));
-                }
-                if (db == null) {
-                    // First pass
-                    buf = new byte[scanline * th];
-                    db = new DataBlkInt(0, 0, tw, th);
-                    ntw = tw;
-                    nth = th;
-                }
-                db.w = tw;
-                db.h = th;
-                length = scanline * th;
-                final int itx = tx * ntw;
-                final int ity = 0;
-                for (int iz=0;iz<numc;iz++) {
-                    int riz = channels == null ? iz : channels[iz];     // output channel, could differ from input channel
-                    if (riz < 0) {
-                        // This is the OPACITY channel. Well technically
-                        // it's something that applies to all channels, but
-                        // given the limitations of what we can do with that
-                        // we'll assume opacity, as that's the only example
-                        // seen to date.
-                        riz = numc - 1;
+        try {
+            rowCallback();
+    //        System.out.println("IN: ty="+ty+"/"+numty+" numtx="+numtx+" numc="+numc+" skip="+skip+" pos="+pos+" length="+length);
+            if (ty == numty) {
+                return false;
+            }
+            if (!skip) {
+                for (int tx=0;tx<numtx;tx++) {
+                    src.setTile(tx, ty);
+                    final int tileix = src.getTileIdx();
+                    // Determine tile width/height - this is not as simple as
+                    // calling src.getTileWidth when using less than full res.
+                    int tw = 0;
+                    int th = 0;
+                    for (int iz=0;iz<numc;iz++) {
+                        tw = Math.max(tw, src.getTileCompWidth(tileix, iz));
+                        th = Math.max(th, src.getTileCompHeight(tileix, iz));
                     }
-                    final int depth = src.getNomRangeBits(iz);
-                    final int mid = 1 << (depth - 1);
-                    final int csx = src.getCompSubsX(iz);
-                    final int csy = src.getCompSubsY(iz);
-                    final int fb = src.getFixedPoint(iz);
-                    // System.out.println("iwh="+iw+"x"+ih+" txy="+tx+"x"+ty+" of "+numtx+","+numty+" itxy="+src.getTilePartULX()+"x"+src.getTilePartULY()+" tcwh="+tw+"x"+th+" twh="+src.getTileWidth()+"x"+src.getTileHeight()+" ntwh="+src.getNomTileWidth()+"x"+src.getNomTileHeight()+" iz="+iz+"="+riz+" ss="+csx+"x"+csy+" d="+depth+" mid="+mid+" fb="+fb+" sl="+scanline+" buf="+buf.length+" channels="+java.util.Arrays.toString(channels));
-                    int[] shift = null;
-                    if (depth < 8) {
-                        shift = new int[1<<depth];
-                        for (int i=0;i<shift.length;i++) {
-                            shift[i] = (int)Math.round(i * 255f / ((1<<depth)-1));
-                        }
+                    if (db == null) {
+                        // First pass
+                        buf = new byte[scanline * th];
+                        db = new DataBlkInt(0, 0, tw, th);
+                        ntw = tw;
+                        nth = th;
                     }
-                    do {
-                        db = (DataBlkInt)src.getInternCompData(db, iz);
-                    } while (db.progressive);
-                    // Main loop: retrieve value, scaled to 8 bits and adjust midpoint
-                    for (int iy=0;iy<th;iy++) {
-                        if (isInterrupted()) {
-                            throw new InterruptedIOException();
+                    db.w = tw;
+                    db.h = th;
+                    length = scanline * th;
+                    final int itx = tx * ntw;
+                    final int ity = 0;
+                    for (int iz=0;iz<numc;iz++) {
+                        int riz = channels == null ? iz : channels[iz];     // output channel, could differ from input channel
+                        if (riz < 0) {
+                            // This is the OPACITY channel. Well technically
+                            // it's something that applies to all channels, but
+                            // given the limitations of what we can do with that
+                            // we'll assume opacity, as that's the only example
+                            // seen to date.
+                            riz = numc - 1;
                         }
-                        for (int ix=0;ix<tw;ix++) {
-                            int val = (db.data[db.offset + iy*tw + ix] >> fb) + mid;
-                            if (depth == 8) {
-                                val = Math.max(0, Math.min(255, val));
-                            } else if (depth > 8) {
-                                val = Math.max(0, Math.min(255, val >> (depth-8)));
-                            } else {
-                                val = shift[val < 0 ? 0 : val >= shift.length ? shift.length-1 : val];
+                        final int depth = src.getNomRangeBits(iz);
+                        final int mid = 1 << (depth - 1);
+                        final int csx = src.getCompSubsX(iz);
+                        final int csy = src.getCompSubsY(iz);
+                        final int fb = src.getFixedPoint(iz);
+                        // System.out.println("iwh="+iw+"x"+ih+" txy="+tx+"x"+ty+" of "+numtx+","+numty+" itxy="+src.getTilePartULX()+"x"+src.getTilePartULY()+" tcwh="+tw+"x"+th+" twh="+src.getTileWidth()+"x"+src.getTileHeight()+" ntwh="+src.getNomTileWidth()+"x"+src.getNomTileHeight()+" iz="+iz+"="+riz+" ss="+csx+"x"+csy+" d="+depth+" mid="+mid+" fb="+fb+" sl="+scanline+" buf="+buf.length+" channels="+java.util.Arrays.toString(channels));
+                        int[] shift = null;
+                        if (depth < 8) {
+                            shift = new int[1<<depth];
+                            for (int i=0;i<shift.length;i++) {
+                                shift[i] = (int)Math.round(i * 255f / ((1<<depth)-1));
                             }
-                            buf[((ity + (iy * csy)) * scanline) + ((itx + (ix * csx)) * numc) + riz] = (byte)val;
                         }
-                    }
-                    if (csx != 1 || csy != 1) {
-                        // Component is subsampled; use bilinear interpolation to fill the gaps. Quick and dirty,
-                        // tested with limited test data
+                        do {
+                            db = (DataBlkInt)src.getInternCompData(db, iz);
+                        } while (db.progressive);
+                        // Main loop: retrieve value, scaled to 8 bits and adjust midpoint
                         for (int iy=0;iy<th;iy++) {
                             if (isInterrupted()) {
                                 throw new InterruptedIOException();
                             }
                             for (int ix=0;ix<tw;ix++) {
-                                // Values on each of the four corners of our space
-                                int v00 = buf[((ity + (iy * csy)) * scanline) + ((itx + (ix * csx)) * numc) + riz] & 0xFF;
-                                int v01 = ix + 1 == tw ? v00 : buf[((ity + (iy * csy)) * scanline) + ((itx + ((ix+1) * csx)) * numc) + riz] & 0xFF;
-                                int v10 = iy + 1 == th ? v00 : buf[((ity + ((iy+1) * csy)) * scanline) + ((itx + (ix * csx)) * numc) + riz] & 0xFF;
-                                int v11 = iy + 1 == th ? (ix + 1 == tw ? v00 : v10) : (ix + 1 == tw ? v10 : buf[((ity + ((iy+1) * csy)) * scanline) + ((itx + ((ix+1) * csx)) * numc) + riz] & 0xFF);
-                                for (int jy=0;jy<csy;jy++) {
-                                    for (int jx=0;jx<csx;jx++) {
-                                        if (jx+jy != 0 && ix + jx < tw && iy + jy < th) {
-                                            // q = interpolated(v00, v01, v10, v11)
-                                            int q0 = v00 + ((v10 - v00) * jx / (csx-1));
-                                            int q1 = v01 + ((v11 - v01) * jx / (csx-1));
-                                            int q = q0 + ((q1-q0) * jy / (csy-1));
-                                            buf[((ity + (iy * csy) + jy) * scanline) + ((itx + (ix * csx) + jx) * numc) + riz] = (byte)q;
+                                int val = (db.data[db.offset + iy*tw + ix] >> fb) + mid;
+                                if (depth == 8) {
+                                    val = Math.max(0, Math.min(255, val));
+                                } else if (depth > 8) {
+                                    val = Math.max(0, Math.min(255, val >> (depth-8)));
+                                } else {
+                                    val = shift[val < 0 ? 0 : val >= shift.length ? shift.length-1 : val];
+                                }
+                                buf[((ity + (iy * csy)) * scanline) + ((itx + (ix * csx)) * numc) + riz] = (byte)val;
+                            }
+                        }
+                        if (csx != 1 || csy != 1) {
+                            // Component is subsampled; use bilinear interpolation to fill the gaps. Quick and dirty,
+                            // tested with limited test data
+                            for (int iy=0;iy<th;iy++) {
+                                if (isInterrupted()) {
+                                    throw new InterruptedIOException();
+                                }
+                                for (int ix=0;ix<tw;ix++) {
+                                    // Values on each of the four corners of our space
+                                    int v00 = buf[((ity + (iy * csy)) * scanline) + ((itx + (ix * csx)) * numc) + riz] & 0xFF;
+                                    int v01 = ix + 1 == tw ? v00 : buf[((ity + (iy * csy)) * scanline) + ((itx + ((ix+1) * csx)) * numc) + riz] & 0xFF;
+                                    int v10 = iy + 1 == th ? v00 : buf[((ity + ((iy+1) * csy)) * scanline) + ((itx + (ix * csx)) * numc) + riz] & 0xFF;
+                                    int v11 = iy + 1 == th ? (ix + 1 == tw ? v00 : v10) : (ix + 1 == tw ? v10 : buf[((ity + ((iy+1) * csy)) * scanline) + ((itx + ((ix+1) * csx)) * numc) + riz] & 0xFF);
+                                    for (int jy=0;jy<csy;jy++) {
+                                        for (int jx=0;jx<csx;jx++) {
+                                            if (jx+jy != 0 && ix + jx < tw && iy + jy < th) {
+                                                // q = interpolated(v00, v01, v10, v11)
+                                                int q0 = v00 + ((v10 - v00) * jx / (csx-1));
+                                                int q1 = v01 + ((v11 - v01) * jx / (csx-1));
+                                                int q = q0 + ((q1-q0) * jy / (csy-1));
+                                                buf[((ity + (iy * csy) + jy) * scanline) + ((itx + (ix * csx) + jx) * numc) + riz] = (byte)q;
+                                            }
                                         }
                                     }
                                 }
@@ -307,13 +309,15 @@ public class J2KReader extends InputStream implements MsgLogger {
                     }
                 }
             }
+            ty++;
+            if (ty == numty) {
+                free();
+            }
+            pos = 0;
+            return true;
+        } catch (RuntimeException e) {
+            throw new IOException("Decode failed at " + pos, e);
         }
-        ty++;
-        if (ty == numty) {
-            free();
-        }
-        pos = 0;
-        return true;
     }
 
     public int read() throws IOException {
