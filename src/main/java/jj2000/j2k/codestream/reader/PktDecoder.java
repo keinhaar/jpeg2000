@@ -1328,7 +1328,7 @@ public class PktDecoder implements StdEntropyCoderOptions{
         val <<= 8;
         val |= sopArray[1];
         if(val!=Markers.SOP) {
-            throw new Error("Corrupted Bitstream: Could not parse SOP "+
+            throw new IOException("Corrupted Bitstream: Could not parse SOP "+
                             "marker !");
         }
 
@@ -1337,7 +1337,7 @@ public class PktDecoder implements StdEntropyCoderOptions{
         val <<= 8;
         val |= (sopArray[3]&0xff);
         if(val!=4) {
-            throw new Error("Corrupted Bitstream: Corrupted SOP marker !");
+            throw new IOException("Corrupted Bitstream: Corrupted SOP marker !");
         }
 
         // Check if sequence number if ok
@@ -1346,13 +1346,13 @@ public class PktDecoder implements StdEntropyCoderOptions{
         val |= (sopArray[5]&0xff);
 
         if(!pph && val!=pktIdx) {
-            throw new Error("Corrupted Bitstream: SOP marker out of "
+            throw new IOException("Corrupted Bitstream: SOP marker out of "
                             +"sequence !");
         }
         if(pph && val!=pktIdx-1) {
             // if packed packet headers are used, packet header was read
             // before SOP marker segment
-            throw new Error("Corrupted Bitstream: SOP marker out of "
+            throw new IOException("Corrupted Bitstream: SOP marker out of "
                             +"sequence !");
         }
         return false;
@@ -1379,7 +1379,7 @@ public class PktDecoder implements StdEntropyCoderOptions{
         val <<= 8;
         val |= ephArray[1];
         if (val!=Markers.EPH) {
-            throw new Error("Corrupted Bitstream: Could not parse EPH "
+            throw new IOException("Corrupted Bitstream: Could not parse EPH "
                             +"marker ! ");
         }
     }

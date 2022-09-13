@@ -198,7 +198,7 @@ public abstract class ImgReader implements BlkImgDataSrc {
      * */
     public int getTileCompWidth(int t,int c) {
         if(t!=0) {
-            throw new Error("Asking a tile-component width for a tile index"+
+            throw new IllegalArgumentException("Asking a tile-component width for a tile index"+
                             " greater than 0 whereas there is only one tile");
         }
         return w;
@@ -219,7 +219,7 @@ public abstract class ImgReader implements BlkImgDataSrc {
      * */
     public int getTileCompHeight(int t,int c) {
         if(t!=0) {
-            throw new Error("Asking a tile-component width for a tile index"+
+            throw new IllegalArgumentException("Asking a tile-component width for a tile index"+
                             " greater than 0 whereas there is only one tile");
         }
         return h;

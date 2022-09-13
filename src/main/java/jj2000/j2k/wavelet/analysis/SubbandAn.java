@@ -347,7 +347,7 @@ public class SubbandAn extends Subband {
                     // There is an error! If all childs have
                     // non-negative l2norm, then this node should have
                     // non-negative l2norm
-                    throw new Error("You have found a bug in JJ2000!");
+                    throw new IllegalStateException("You have found a bug in JJ2000!");
                 }
             }
             else {
@@ -363,7 +363,7 @@ public class SubbandAn extends Subband {
         else {
             // This is an error! The calcBasisWaveForms() method is
             // never called on an element with non-negative l2norm
-            throw new Error("You have found a bug in JJ2000!");
+            throw new IllegalStateException("You have found a bug in JJ2000!");
         }
     }
 
@@ -407,7 +407,7 @@ public class SubbandAn extends Subband {
                     // There is an error! If all childs have
                     // non-negative l2norm, then this node should have
                     // non-negative l2norm
-                    throw new Error("You have found a bug in JJ2000!");
+                    throw new IllegalStateException("You have found a bug in JJ2000!");
                 }
             }
             else {
@@ -419,7 +419,7 @@ public class SubbandAn extends Subband {
         else {
             // This is an error! The assignL2Norm() method is
             // never called on an element with non-negative l2norm
-            throw new Error("You have found a bug in JJ2000!");
+            throw new IllegalStateException("You have found a bug in JJ2000!");
         }
     }
 

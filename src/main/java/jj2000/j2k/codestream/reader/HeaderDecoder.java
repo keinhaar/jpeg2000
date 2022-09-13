@@ -536,7 +536,7 @@ public class HeaderDecoder implements ProgressionType, Markers,
         // Read the capability of the codestream (Rsiz)
         ms.rsiz = ehs.readUnsignedShort();
         if (ms.rsiz > 2) {
-            throw new Error("Codestream capabiities not JPEG 2000 - Part I"+
+            throw new IOException("Codestream capabiities not JPEG 2000 - Part I"+
                             " compliant");
         }
 

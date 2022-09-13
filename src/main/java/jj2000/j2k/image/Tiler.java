@@ -249,7 +249,7 @@ public class Tiler extends ImgDataAdapter implements BlkImgDataSrc {
      * */
     public final int getTileCompWidth(int t,int c) {
         if(t!=getTileIdx()) {
-            throw new Error("Asking the width of a tile-component which is "+
+            throw new IllegalStateException("Asking the width of a tile-component which is "+
                             "not in the current tile (call setTile() or "+
                             "nextTile() methods before).");
         }
@@ -267,7 +267,7 @@ public class Tiler extends ImgDataAdapter implements BlkImgDataSrc {
      * */
     public final int getTileCompHeight(int t,int c) {
         if(t!=getTileIdx()) {
-            throw new Error("Asking the width of a tile-component which is "+
+            throw new IllegalStateException("Asking the width of a tile-component which is "+
                             "not in the current tile (call setTile() or "+
                             "nextTile() methods before).");
         }

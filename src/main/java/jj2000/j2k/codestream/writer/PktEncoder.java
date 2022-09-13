@@ -46,6 +46,7 @@
 package jj2000.j2k.codestream.writer;
 import java.awt.Point;
 import java.util.Vector;
+import java.io.IOException;
 
 import jj2000.j2k.codestream.CBlkCoordInfo;
 import jj2000.j2k.codestream.PrecInfo;
@@ -668,7 +669,7 @@ public class PktEncoder {
     public BitOutputBuffer encodePacket(int ly,int c,int r,int t,
                                         CBlkRateDistStats cbs[][],
                                         int tIndx[][],BitOutputBuffer hbuf,
-                                        byte bbuf[],int pIdx) {
+                                        byte bbuf[],int pIdx) throws IOException {
         int b,i,maxi;
         int ncb;
         int thmax;
@@ -1023,8 +1024,7 @@ public class PktEncoder {
 
         // Must never happen
         if(hbuf.getLength()==0) {
-            throw new Error("You have found a bug in PktEncoder, method:"+
-                            " encodePacket");
+            throw new IOException("You have found a bug in PktEncoder, method:"+ " encodePacket");
         }
 
         return hbuf;

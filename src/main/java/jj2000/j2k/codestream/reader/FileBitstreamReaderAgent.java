@@ -119,7 +119,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent
      * */
     public int getNumTileParts(int t) {
         if(firstPackOff==null || firstPackOff[t]==null) {
-            throw new Error("Tile "+t+" not found in input codestream.");
+            throw new IllegalStateException("Tile "+t+" not found in input codestream.");
         }
         return firstPackOff[t].length;
     }
@@ -266,7 +266,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent
         //int ncbQuit = j2krparam.getNCBQuit();
         int ncbQuit = -1;
         if(ncbQuit != -1 && !isTruncMode){
-            throw new Error("Cannot use -parsing and -ncb_quit condition at "+
+            throw new IOException("Cannot use -parsing and -ncb_quit condition at "+
                             "the same time.");
         }
 
@@ -312,7 +312,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent
 
         // If cannot even read the first tile-part
         if(anbytes>tnbytes) {
-            throw new Error("Requested bitrate is too small.");
+            throw new IOException("Requested bitrate is too small.");
         }
 
         // Initialize variables used when reading tile-part headers.
@@ -734,7 +734,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent
         // If there are too few bytes to read the tile part headers throw an
         // error
         if(anbytes > stopOff){
-            throw new Error("Requested bitrate is too small for parsing");
+            throw new IOException("Requested bitrate is too small for parsing");
         }
 
         // Calculate bitrate for each tile
@@ -1314,7 +1314,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent
         } // components
 
         if(nPrec==0) {
-            throw new Error("Image cannot have no precinct");
+            throw new IOException("Image cannot have no precinct");
         }
 
         int pyend = (maxy-miny)/gcd_y+1;
@@ -1532,7 +1532,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent
         } // components
 
         if(nPrec==0) {
-            throw new Error("Image cannot have no precinct");
+            throw new IOException("Image cannot have no precinct");
         }
 
         int pyend = (maxy-miny)/gcd_y+1;
@@ -1739,7 +1739,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent
         } // components
 
         if(nPrec==0) {
-            throw new Error("Image cannot have no precinct");
+            throw new IOException("Image cannot have no precinct");
         }
 
         int pyend = (maxy-miny)/gcd_y+1;
@@ -2248,7 +2248,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent
             readTilePkts(t);
         } catch(IOException e) {
             e.printStackTrace();
-            throw new Error("IO Error when reading tile "+x+" x "+y);
+            throw new IllegalArgumentException("IO Error when reading tile "+x+" x "+y);
         }
     }
 
@@ -2347,7 +2347,7 @@ public class FileBitstreamReaderAgent extends BitstreamReaderAgent
         int maxdl = getSynSubbandTree(t,c).resLvl;
         /* XXX Suppress error check for speed performance reasons.
         if(r>targetRes+maxdl-decSpec.dls.getMin()) {
-            throw new Error("JJ2000 error: requesting a code-block "+
+            throw new IOException("JJ2000 error: requesting a code-block "+
                             "disallowed by the '-res' option.");
         }
         */

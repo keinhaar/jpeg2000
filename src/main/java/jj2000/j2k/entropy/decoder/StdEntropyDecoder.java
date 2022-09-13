@@ -784,7 +784,7 @@ public class StdEntropyDecoder extends EntropyDecoder
             zc_lut = ZC_LUT_HH;
             break;
         default:
-            throw new Error("JJ2000 internal error");
+            throw new IllegalStateException("JJ2000 internal error");
         }
 
         // NOTE: we don't currently detect which is the last magnitude

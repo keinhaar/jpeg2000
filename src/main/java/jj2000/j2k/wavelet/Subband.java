@@ -418,14 +418,14 @@ public abstract class Subband {
                 sb = sb.getParent().getHH();
                 break;
             default:
-                throw new Error("You have found a bug in JJ2000");
+                throw new IllegalStateException("You have found a bug in JJ2000");
             }
             while (sb.isNode) {
                 sb = sb.getLL();
             }
             return sb;
         default:
-            throw new Error("You have found a bug in JJ2000");
+            throw new IllegalStateException("You have found a bug in JJ2000");
         }
     }
 

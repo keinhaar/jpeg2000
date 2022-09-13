@@ -1003,7 +1003,7 @@ public class MQCoder {
             }
             break;
         default:
-            throw new Error("Illegal termination type code");
+            throw new IllegalStateException("Illegal termination type code");
         }
 
         // Reinitialize the state (without modifying the contexts)
@@ -1119,7 +1119,7 @@ public class MQCoder {
             // finishLengthCalculation()
             return nrOfWrittenBytes;
         default:
-            throw new Error("Illegal length calculation type code");
+            throw new IllegalStateException("Illegal length calculation type code");
         }
     }
 

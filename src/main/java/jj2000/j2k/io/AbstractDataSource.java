@@ -119,7 +119,7 @@ public abstract class AbstractDataSource implements BlkImgDataSrc {
     }
 
     public DataBlk getCompData(DataBlk blk, int c) {
-        throw new Error();
+        throw new IllegalStateException();
     }
 
     public int getFixedPoint(int c) {

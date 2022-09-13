@@ -76,7 +76,7 @@ public class ProgressionSpec extends ModuleSpec {
     public ProgressionSpec(int nt, int nc, byte type) {
         super(nt, nc, type);
         if ( type !=  ModuleSpec.SPEC_TYPE_TILE ) {
-            throw new Error("Illegal use of class ProgressionSpec !");
+            throw new IllegalArgumentException("Illegal use of class ProgressionSpec !");
         }
     }
 
@@ -243,7 +243,7 @@ public class ProgressionSpec extends ModuleSpec {
 			break;
 		    }
 		    else{
-			throw new Error("Error in usage of 'Aptype' "+
+			throw new IllegalStateException("Error in usage of 'Aptype' "+
 					"option: "+param);
 		    }
 		}

@@ -127,7 +127,7 @@ public class Progression implements ProgressionType{
 	    str += "pos-comp, ";
 	    break;
 	default:
-	    throw new Error("Unknown progression type");
+	    str += "Unknown progression type="+type;
 	}
 	str += "comp.: "+cs+"-"+ce+", ";
 	str += "res.: "+rs+"-"+re+", ";

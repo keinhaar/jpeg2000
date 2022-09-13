@@ -431,7 +431,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc {
                     maskPGM = new ImgReaderPGM(filename);
                 }
                 catch(IOException e){
-                    throw new Error("Cannot read PGM file with ROI");
+                    throw new IllegalStateException("Cannot read PGM file with ROI");
                 }
 
 		// If the ROI is component-specific, check which comps.
@@ -450,7 +450,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc {
 		}
                 break;
 	    default:
-		throw new Error("Bad parameters for ROI nr "+roiVector.size());
+		throw new IllegalStateException("Bad parameters for ROI nr "+roiVector.size());
 	    }
 	}
 

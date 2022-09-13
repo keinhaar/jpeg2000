@@ -447,7 +447,7 @@ public class ForwWTFull extends ForwardWT {
             acb0y = 0;
             break;
         default:
-            throw new Error("Internal JJ2000 error");
+            throw new IllegalStateException("Internal JJ2000 error");
         }
         // Initialize output code-block
         if (cblk==null) {
@@ -1040,7 +1040,7 @@ public class ForwWTFull extends ForwardWT {
                     acb0y = 0;
                     break;
                 default:
-                    throw new Error("Internal JJ2000 error");
+                    throw new IllegalStateException("Internal JJ2000 error");
                 }
                 if(sb.ulcx-acb0x<0 || sb.ulcy-acb0y<0) {
                     throw new IllegalArgumentException("Invalid code-blocks "+

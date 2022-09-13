@@ -241,7 +241,7 @@ public class WTDecompSpec {
         case DEC_SPEC_TILE_COMP:
             throw new NotImplementedError();
         default:
-            throw new Error("Internal JJ2000 error");
+            throw new IllegalStateException("Internal JJ2000 error");
         }
     }
 
@@ -270,7 +270,7 @@ public class WTDecompSpec {
         case DEC_SPEC_TILE_COMP:
             throw new NotImplementedError();
         default:
-            throw new Error("Internal JJ2000 error");
+            throw new IllegalStateException("Internal JJ2000 error");
         }
     }
 }

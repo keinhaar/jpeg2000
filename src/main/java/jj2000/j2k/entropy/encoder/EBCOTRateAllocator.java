@@ -591,7 +591,7 @@ public class EBCOTRateAllocator extends PostCompRateAllocator {
 	    }
 	}
 	if(nValidProg==0)
-	    throw new Error("Unable to initialize rate allocator: No "+
+	    throw new IOException("Unable to initialize rate allocator: No "+
                             "default progression type has been defined.");
 
 	// Tile specific values
@@ -605,7 +605,7 @@ public class EBCOTRateAllocator extends PostCompRateAllocator {
 		    }
 		}
 		if(nValidProg==0)
-		    throw new Error("Unable to initialize rate allocator: No "+
+		    throw new IOException("Unable to initialize rate allocator: No "+
                             "default progression type has been defined.");
 	    }
 	} // End loop on tiles
@@ -892,7 +892,7 @@ public class EBCOTRateAllocator extends PostCompRateAllocator {
                     writeResPosCompLy(t,rs,re,cs,ce,lys,lye);
                     break;
                 default:
-                    throw new Error("Unsupported bit stream progression type");
+                    throw new IOException("Unsupported bit stream progression type");
                 } // switch on progression
 
                 // Update next first layer index 
@@ -1178,7 +1178,7 @@ public class EBCOTRateAllocator extends PostCompRateAllocator {
             } // resolution levels
         } // components
         if(nPrec==0) {
-            throw new Error("Image cannot have no precinct");
+            throw new IOException("Image cannot have no precinct");
         }
 
         int pyend = (maxy-miny)/gcd_y+1;
@@ -1260,7 +1260,7 @@ public class EBCOTRateAllocator extends PostCompRateAllocator {
             for(int r=rs; r<re; r++) {
                 if(r>mrl) continue;
                 if(nextPrec[c][r]<numPrec[t][c][r].x*numPrec[t][c][r].y-1) {
-                    throw new Error("JJ2000 bug: One precinct at least has "+
+                    throw new IOException("JJ2000 bug: One precinct at least has "+
                                     "not been written for resolution level "+r
                                     +" of component "+c+" in tile "+t+".");
                 }
@@ -1363,7 +1363,7 @@ public class EBCOTRateAllocator extends PostCompRateAllocator {
             } // resolution levels
         } // components
         if(nPrec==0) {
-            throw new Error("Image cannot have no precinct");
+            throw new IOException("Image cannot have no precinct");
         }
 
         int pyend = (maxy-miny)/gcd_y+1;
@@ -1448,7 +1448,7 @@ public class EBCOTRateAllocator extends PostCompRateAllocator {
             for(int r=rs; r<re; r++) {
                 if(r>mrl) continue;
                 if(nextPrec[c][r]<numPrec[t][c][r].x*numPrec[t][c][r].y-1) {
-                    throw new Error("JJ2000 bug: One precinct at least has "+
+                    throw new IOException("JJ2000 bug: One precinct at least has "+
                                     "not been written for resolution level "+r
                                     +" of component "+c+" in tile "+t+".");
                 }
@@ -1552,7 +1552,7 @@ public class EBCOTRateAllocator extends PostCompRateAllocator {
         } // components
 
         if(nPrec==0) {
-            throw new Error("Image cannot have no precinct");
+            throw new IOException("Image cannot have no precinct");
         }
 
         int pyend = (maxy-miny)/gcd_y+1;
@@ -1635,7 +1635,7 @@ public class EBCOTRateAllocator extends PostCompRateAllocator {
             for(int r=rs; r<re; r++) {
                 if(r>mrl) continue;
                 if(nextPrec[c][r]<numPrec[t][c][r].x*numPrec[t][c][r].y-1) {
-                    throw new Error("JJ2000 bug: One precinct at least has "+
+                    throw new IOException("JJ2000 bug: One precinct at least has "+
                                     "not been written for resolution level "+r
                                     +" of component "+c+" in tile "+t+".");
                 }

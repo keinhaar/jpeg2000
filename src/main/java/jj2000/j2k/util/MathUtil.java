@@ -104,7 +104,7 @@ public class MathUtil {
                 return i*max;
             }
         }
-        throw new Error("Cannot find the least common multiple of numbers "+
+        throw new IllegalStateException("Cannot find the least common multiple of numbers "+
                         x1+" and "+x2);
     }
 
@@ -116,7 +116,7 @@ public class MathUtil {
      * */
     public static final int lcm(int[] x) {
         if(x.length<2) {
-            throw new Error("Do not use this method if there are less than"+
+            throw new IllegalStateException("Do not use this method if there are less than"+
                             " two numbers.");
         }
         int tmp = lcm(x[x.length-1],x[x.length-2]);
@@ -171,7 +171,7 @@ public class MathUtil {
      * */
     public static final int gcd(int[] x) {
         if(x.length<2) {
-            throw new Error("Do not use this method if there are less than"+
+            throw new IllegalStateException("Do not use this method if there are less than"+
                             " two numbers.");
         }
         int tmp = gcd(x[x.length-1],x[x.length-2]);

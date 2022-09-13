@@ -547,7 +547,7 @@ public abstract class BitstreamReaderAgent implements CodedCBlkDataSrcDec {
     public final int getTileCompWidth(int t,int c,int rl) {
         int tIdx = getTileIdx();
         if(t!=tIdx) {
-            throw new Error("Asking the tile-component width of a tile "+
+            throw new IllegalArgumentException("Asking the tile-component width of a tile "+
                             "different  from the current one.");
         }
         // Calculate starting X of next tile X-wise at reference grid hi-res
@@ -576,7 +576,7 @@ public abstract class BitstreamReaderAgent implements CodedCBlkDataSrcDec {
     public final int getTileCompHeight(int t,int c,int rl) {
         int tIdx = getTileIdx();
         if(t!=tIdx) {
-            throw new Error("Asking the tile-component width of a tile "+
+            throw new IllegalArgumentException("Asking the tile-component width of a tile "+
                             "different  from the current one.");
         }
         // Calculate starting Y of next tile Y-wise at reference grid hi-res
@@ -981,7 +981,7 @@ public abstract class BitstreamReaderAgent implements CodedCBlkDataSrcDec {
                     acb0y = 0;
                     break;
                 default:
-                    throw new Error("Internal JJ2000 error");
+                    throw new IllegalStateException("Internal JJ2000 error");
                 }
                 if(sb.ulcx-acb0x<0 || sb.ulcy-acb0y<0) {
                     throw new IllegalArgumentException("Invalid code-blocks "+

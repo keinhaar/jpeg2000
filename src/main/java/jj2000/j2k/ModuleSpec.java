@@ -279,7 +279,7 @@ public class ModuleSpec implements Cloneable {
             String errMsg = "Option whose value is '"+value+"' cannot be "
                 +"specified for components as it is a 'tile only' specific "
                 +"option";
-            throw new Error(errMsg);
+            throw new IllegalArgumentException(errMsg);
         }
 	if(compDef==null)
 	    compDef = new Object[nComp];
@@ -304,7 +304,7 @@ public class ModuleSpec implements Cloneable {
      * */
     public Object getCompDef(int c){
         if ( specType == SPEC_TYPE_TILE ) {
-            throw new Error("Illegal use of ModuleSpec class");
+            throw new IllegalArgumentException("Illegal use of ModuleSpec class");
         }
 	if(compDef==null || compDef[c]==null){
 	    return getDefault();
@@ -324,7 +324,7 @@ public class ModuleSpec implements Cloneable {
             String errMsg = "Option whose value is '"+value+"' cannot be "
                 + "specified for tiles as it is a 'component only' specific "
                 + "option";
-            throw new Error(errMsg);
+            throw new IllegalStateException(errMsg);
         }
 	if(tileDef==null)
 	    tileDef = new Object[nTiles];
@@ -348,7 +348,7 @@ public class ModuleSpec implements Cloneable {
      * */
     public Object getTileDef(int t){
         if ( specType == SPEC_TYPE_COMP ) {
-            throw new Error("Illegal use of ModuleSpec class");
+            throw new IllegalStateException("Illegal use of ModuleSpec class");
         }
 	if(tileDef==null || tileDef[t]==null){
 	    return getDefault();
@@ -376,7 +376,7 @@ public class ModuleSpec implements Cloneable {
                 errMsg += "tiles as it is a 'component only' specific option";
                 break;
             }
-            throw new Error(errMsg);
+            throw new IllegalStateException(errMsg);
         }
 	if(tileCompVal==null)
 	    tileCompVal = new Hashtable();
@@ -400,7 +400,7 @@ public class ModuleSpec implements Cloneable {
      * */
     public Object getTileCompVal(int t,int c){
         if ( specType != SPEC_TYPE_TILE_COMP ) {
-            throw new Error("Illegal use of ModuleSpec class");
+            throw new IllegalStateException("Illegal use of ModuleSpec class");
         }
 	return getSpec(t,c);
     }

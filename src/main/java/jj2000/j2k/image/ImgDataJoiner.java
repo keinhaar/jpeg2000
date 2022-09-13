@@ -180,7 +180,7 @@ public class ImgDataJoiner implements BlkImgDataSrc {
                 imD[i].getCompImgWidth(cIdx[i]) ||
                 (maxH+subsY[i]-1)/subsY[i] !=
                 imD[i].getCompImgHeight(cIdx[i])) {
-                throw new Error("Can not compute component subsampling "+
+                throw new IllegalStateException("Can not compute component subsampling "+
                                 "factors: strange subsampling.");
             }
         }

@@ -1405,7 +1405,7 @@ public class StdEntropyCoder extends EntropyCoder
             zc_lut = ZC_LUT_HH;
             break;
         default:
-            throw new Error("JJ2000 internal error");
+            throw new IllegalStateException("JJ2000 internal error");
         }
 
         // Loop on significant magnitude bit-planes doing the 3 passes

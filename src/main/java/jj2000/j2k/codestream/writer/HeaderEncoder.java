@@ -826,7 +826,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions {
             }
         }
         if(notFound) {
-            throw new Error("Default representative for quantization type "+
+            throw new IOException("Default representative for quantization type "+
                             " and number of decomposition levels not found "+
                             " in main QCD marker segment. "+
                             "You have found a JJ2000 bug.");
@@ -872,7 +872,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions {
             }
             break;
         default:
-            throw new Error("Internal JJ2000 error");
+            throw new IOException("Internal JJ2000 error");
         }
 
         // Lqcd (marker segment length (in bytes))
@@ -939,7 +939,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions {
             }
             break;
         default:
-            throw new Error("Internal JJ2000 error");
+            throw new IOException("Internal JJ2000 error");
         }
     }
 
@@ -990,7 +990,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions {
             }
         }
         if(notFound) {
-            throw new Error("Default representative for quantization type "+
+            throw new IOException("Default representative for quantization type "+
                             " and number of decomposition levels not found "+
                             " in main QCC (c="+compIdx+") marker segment. "+
                             "You have found a JJ2000 bug.");
@@ -1046,7 +1046,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions {
             }
             break;
         default:
-            throw new Error("Internal JJ2000 error");
+            throw new IOException("Internal JJ2000 error");
         }
 
         // Lqcc (marker segment length (in bytes))
@@ -1123,7 +1123,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions {
             }
             break;
         default:
-            throw new Error("Internal JJ2000 error");
+            throw new IOException("Internal JJ2000 error");
         }
     }
 
@@ -1161,7 +1161,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions {
             }
         }
         if(notFound) {
-            throw new Error("Default representative for quantization type "+
+            throw new IOException("Default representative for quantization type "+
                             " and number of decomposition levels not found "+
                             " in tile QCD (t="+tIdx+") marker segment. "+
                             "You have found a JJ2000 bug.");
@@ -1210,7 +1210,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions {
             }
             break;
         default:
-            throw new Error("Internal JJ2000 error");
+            throw new IOException("Internal JJ2000 error");
         }
 
         // Lqcd (marker segment length (in bytes))
@@ -1277,7 +1277,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions {
             }
             break;
         default:
-            throw new Error("Internal JJ2000 error");
+            throw new IOException("Internal JJ2000 error");
         }
     }
 
@@ -1362,7 +1362,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions {
             }
             break;
         default:
-            throw new Error("Internal JJ2000 error");
+            throw new IOException("Internal JJ2000 error");
         }
 
         // Lqcc (marker segment length (in bytes))
@@ -1439,7 +1439,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions {
             }
             break;
         default:
-            throw new Error("Internal JJ2000 error");
+            throw new IOException("Internal JJ2000 error");
         }
     }
 
