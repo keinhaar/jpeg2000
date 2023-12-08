@@ -3,12 +3,9 @@ package com.github.jpeg2000.imageio;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
-import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Iterator;
 
-import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
@@ -170,11 +167,11 @@ public class JPEG2000Reader extends ImageReader
         
     }
     
-    public static void main(String[] args) throws IOException
-    {
-        BufferedImage img = ImageIO.read(new File("/tmp/relax.jp2"));
-        System.out.println(Arrays.asList(ImageIO.getReaderFormatNames()));
-        System.out.println(Arrays.asList(ImageIO.getReaderFileSuffixes()));
-        System.out.println(img);
-    }
+//    public static void main(String[] args) throws IOException
+//    {
+//        BufferedImage img = ImageIO.read(new File("/tmp/relax.jp2"));
+//        System.out.println(Arrays.asList(ImageIO.getReaderFormatNames()));
+//        System.out.println(Arrays.asList(ImageIO.getReaderFileSuffixes()));
+//        System.out.println(img);
+//    }
 }
