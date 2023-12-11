@@ -6,10 +6,14 @@
     <delete dir="target"/>
   </target>
 
+  <!--
+      The source/target/release are arbitrarily set to 8 so the Jars can be used with older JVMs,
+      but there's no need to do so. If this causes problems just remove those attributes
+  -->
   <target name="compile">
     <mkdir dir="target/classes/main"/>
     <mkdir dir="target/classes/test"/>
-    <javac source="1.5" target="1.5" destdir="target/classes/main" srcdir="src/main/java" debug="true"/>
+    <javac source="8" target="8" release="8" destdir="target/classes/main" srcdir="src/main/java" debug="true"/>
     <copy todir="target/classes/main">
       <fileset dir="src/main/resources" />
     </copy>
@@ -20,7 +24,7 @@
   </target>
 
   <target name="test" depends="jar">
-    <javac source="1.5" target="1.5" destdir="target/classes/test" srcdir="src/test/java" debug="true">
+    <javac source="8" target="8" release="8" destdir="target/classes/test" srcdir="src/test/java" debug="true">
       <classpath>
         <pathelement location="target/jj2000.jar"/>
       </classpath>
