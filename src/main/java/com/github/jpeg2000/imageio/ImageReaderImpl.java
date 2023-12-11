@@ -28,10 +28,7 @@ public class ImageReaderImpl extends ImageReaderSpi
             byte[] magicNumber = new byte[6];
             in.readFully(magicNumber);
             in.reset();
-            if(Arrays.equals(this.magicNumber, magicNumber))
-            {
-                return true;
-            }
+            return Arrays.equals(this.magicNumber, magicNumber);
         }
         return false;
     }
